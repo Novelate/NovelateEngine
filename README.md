@@ -67,7 +67,7 @@ When the parser encounters a **//** then the rest of the line is deemed a commen
 <SECTION:Scene>
 ```
 
-### \<\__Config\__\>
+### \<\_\_Config\_\_\>
 
 The config section only allows for INI like entries such as:
 
