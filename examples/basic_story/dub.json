@@ -5,6 +5,6 @@
   "stringImportPaths": ["story", "config"],
   "lflags" : ["+libs\\"],
   "dependencies": {
-    "novelate": "0.0.1"
+    "novelate": "0.0.3"
   }
 }
