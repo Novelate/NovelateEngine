@@ -361,9 +361,8 @@ To compile on Windows x86 you can simply use **dub build** on a project with the
   "sourcePaths": ["source"],
   "stringImportPaths": ["story", "config"],
   "lflags" : ["+libs\\"],
-  "versions": ["NOVELATE_CUSTOM_MAINX"],
   "dependencies": {
-    "novelate": "0.0.1"
+    "novelate": "0.0.3"
   }
 }
 ```
