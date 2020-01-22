@@ -45,7 +45,7 @@ dstring wrapableText(dstring text, string fontName, uint fontSize, size_t width)
 
   dstring calculateText = "";
 
-  auto lastWhiteIndex = 0;
+  size_t lastWhiteIndex = 0;
   bool hasForeignCharacters = false;
 
   foreach (ref i; 0 .. text.length)

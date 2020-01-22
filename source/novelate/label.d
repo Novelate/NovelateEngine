@@ -34,7 +34,7 @@ final class Label : Component
   /// The font.
   Font _font;
   /// The font size.
-  uint _fontSize;
+  size_t _fontSize;
   /// The color.
   Color _color;
 
@@ -52,7 +52,7 @@ final class Label : Component
     _textComponent = new Text();
     _textComponent.setFont(_font);
     _textComponent.setString("");
-    _textComponent.setCharacterSize(_fontSize);
+    _textComponent.setCharacterSize(cast(uint) _fontSize);
   }
 
   @property
@@ -85,14 +85,14 @@ final class Label : Component
     }
 
     /// Gets the font size.
-    uint fontSize() { return _fontSize; }
+    size_t fontSize() { return _fontSize; }
 
     /// Sets the font size.
-    void fontSize(uint newFontSize)
+    void fontSize(size_t newFontSize)
     {
       _fontSize = newFontSize;
 
-      _textComponent.setCharacterSize(_fontSize);
+      _textComponent.setCharacterSize(cast(uint) _fontSize);
     }
 
     /// Gets the color.
