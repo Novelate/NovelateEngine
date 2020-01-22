@@ -10,9 +10,7 @@ Novelate is an open-source visual novel framework and engine, written in the D p
 
 *Novelate is basically a complete remake of the engine back then and instead of using SDL it uses SFML.*
 
-The bindings to SFML are through DSFML but a *"forked"* version to the Novelate engine in case the original project stagnates entirely or goes through breaking changes.
-
-It uses version 2.1.1 (Apr. 19th, 2016) of the DSFML fork.
+The bindings to SFML are through DSFMLusing version 2.1.1 (Apr. 19th 2016) in case the original project stagnates entirely or goes through breaking changes. That is also the latest release for the binding other than the master itself which is not stable.
 
 ***The engine itself is not currently stable and still in early development, however it has some of the basic functionality done. This also means not all configurations etc. are supported yet.***
 

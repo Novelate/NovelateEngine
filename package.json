@@ -11,12 +11,7 @@
 	"sourcePaths": [
 		"source"
 	],
-	"subPackages": [
-		"./external/dsfml"
-	],
 	"dependencies": {
-    "dsfml": {
-			"path": "external/dsfml"
-		}
+    "dsfml": "2.1.1"
 	}
 }
