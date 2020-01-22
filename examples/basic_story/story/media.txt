@@ -1,0 +1,8 @@
+<MenuBackground:Media>
+data\media\menu_background.png
+
+<Background:Media>
+data\backgrounds\background.png
+
+<Logo:Media>
+data\media\logo.png

@@ -1,0 +1,10 @@
+{
+  "name": "visualnovel",
+  "targetType": "executable",
+  "sourcePaths": ["source"],
+  "stringImportPaths": ["story", "config"],
+  "lflags" : ["+libs\\"],
+  "dependencies": {
+    "novelate": "0.0.1"
+  }
+}

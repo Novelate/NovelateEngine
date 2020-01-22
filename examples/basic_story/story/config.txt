@@ -1,0 +1,47 @@
+<__Config__>
+DataFolder=data
+SaveFolder=data/saves
+
+GameTitle=Novelate
+GameSlogan=Visual Novel Engine
+GameDescription=The description of the game
+
+GameAbout=Line1 for about
+GameAbout=https://novelate.com/
+GameAbout=Line3 for about
+
+MenuItem_Play=Play|255,255,255|msgothic
+MenuItem_Load=Load|255,255,255|msgothic
+MenuItem_Save=Save|255,255,255|msgothic
+MenuItem_About=About|255,255,255|msgothic
+MenuItem_Characters=Characters|255,255,255|msgothic
+MenuItem_Exit=Exit|255,255,255|msgothic
+
+MenuBoxPosition_800=C,C
+MenuBoxPosition_1024=C,C
+MenuBoxPosition_1280=C,C
+
+MenuLogoImage=Logo|24
+
+MenuLogoImageLocation_800=48,48
+MenuLogoImageLocation_1024=48,48
+MenuLogoImageLocation_1280=48,48
+
+MenuMusic=MenuMusic
+
+MenuBackground=MenuBackground|100
+
+DefaultFont=msgothic
+DefaultFontSize=18
+
+DefaultDialogueColor=255,255,255
+DefaultDialogueBackground=0,0,0,140
+DefaultDialoguePadding=8
+DefaultDialogueMargin=8
+DefaultDialogueHeight_800=200
+DefaultDialogueHeight_1024=300
+DefaultDialogueHeight_1280=400
+DefaultDialogueNameFontSize=24
+DefaultDialogueTextFontSize=20
+
+StartScene=Scene1

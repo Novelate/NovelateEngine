@@ -1,0 +1,28 @@
+<Scene1:Scene>
+Music=GameMusic
+Background=Background
+---
+  Aiko
+  Text=This is dialogue text!
+  SpritePosition=Left
+  Sprite=Casual.Aiko_Smile_Blush_Side
+  ===
+  Text=This is some more text by Aiko
+  ===
+  Miki
+  KeepSprite;
+  SpritePosition=Center
+  Sprite=Casual.Miki_Casual_Open_Blush
+  Text=This is some text by Miki
+  ===
+  Option=Scene2|Go to Scene 2
+
+<Scene2:Scene>
+Background=Background
+---
+  Aiko
+  Text=This is the final text
+  SpritePosition=Left
+  Sprite=Casual.Aiko_Smile_Blush_Side
+  ===
+  End;

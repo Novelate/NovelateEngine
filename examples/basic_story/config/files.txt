@@ -1,0 +1,6 @@
+media.txt
+characters.txt
+config.txt
+main.txt
+sounds.txt
+story.txt

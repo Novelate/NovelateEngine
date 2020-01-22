@@ -1,0 +1,15 @@
+<Aikoあいこ:Character>
+Alias=Aiko
+NameColor=255,0,0
+Casual=data\Aiko\Casual
+Casual_Pony=data\Aiko\Casual\Pony
+About=Some description about Aiko
+AboutImage=Casual.Aiko_Smile_Blush_Side
+
+<美姫:Character>
+Alias=Miki
+NameColor=0,255,0
+Casual=data\Miki\Casual
+Casual_Sidetail=data\Miki\Casual\Sidetail
+About=Some description about Miki
+AboutImage=Casual.Miki_Casual_Open_Blush

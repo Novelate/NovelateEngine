@@ -1,0 +1,5 @@
+<MenuMusic:Music>
+data\music\menu.ogg
+
+<GameMusic:Music>
+data\music\game.ogg
