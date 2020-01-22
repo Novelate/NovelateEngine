@@ -11,6 +11,9 @@
 	"sourcePaths": [
 		"source"
 	],
+	"subPackages": [
+		"./external/dsfml"
+	],
 	"dependencies": {
     "dsfml": {
 			"path": "external/dsfml"
