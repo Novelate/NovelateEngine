@@ -41,7 +41,7 @@ final class TimedText : Component
   /// The font.
   Font _font;
   /// The font size.
-  uint _fontSize;
+  size_t _fontSize;
   /// The box width.
   size_t _boxWidth;
   /// Boolean determining whether the text has finished rendering.
@@ -65,7 +65,7 @@ final class TimedText : Component
     _textComponent = new Text();
     _textComponent.setFont(_font);
     _textComponent.setString("");
-    _textComponent.setCharacterSize(_fontSize);
+    _textComponent.setCharacterSize(cast(uint) _fontSize);
     _textCount = 1;
 
     super.globalKeyRelease = (k, ref s)
@@ -121,7 +121,7 @@ final class TimedText : Component
     void text(dstring newText)
     {
       _originalText = newText;
-      _text = wrapableText(_originalText, _fontName, _fontSize, _boxWidth);
+      _text = wrapableText(_originalText, _fontName, cast(uint) _fontSize, _boxWidth);
       _textCount = 1;
       _hasFinished = false;
     }
@@ -139,14 +139,14 @@ final class TimedText : Component
     }
 
     /// Gets the font size.
-    uint fontSize() { return _fontSize; }
+    size_t fontSize() { return _fontSize; }
 
     /// Sets the font size.
-    void fontSize(uint newFontSize)
+    void fontSize(size_t newFontSize)
     {
       _fontSize = newFontSize;
 
-      _textComponent.setCharacterSize(_fontSize);
+      _textComponent.setCharacterSize(cast(uint) _fontSize);
     }
 
     /// Gets the color.
@@ -218,7 +218,7 @@ final class TimedText : Component
 
     _textComponent.position = Vector2f(config.defaultDialogueMargin + config.defaultDialoguePadding, ((height + config.defaultDialoguePadding) - boxHeight));
 
-    _text = wrapableText(_originalText, _fontName, _fontSize, _boxWidth);
+    _text = wrapableText(_originalText, _fontName, cast(uint) _fontSize, _boxWidth);
 
     if (_text && _text.length)
     {
