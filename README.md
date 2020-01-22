@@ -32,6 +32,12 @@ When creating stories it uses a specialized file format that allows for flexibil
 
 * Proper unicode support - Ex. Japanese, Chinese etc.
 * Events for extra programming functionality
+* UI Components (Labels, Timed Text, Images, Animations ...) Events, Customization, Effects (Fading ...) etc.
+* A lot of game configurations and customization
+* Flexible and dynamic *"game scripting"* for creative story creation
+* Native compilation
+* Basic Visual Novel Features (Characters, Dialogues, Options etc.)
+* And more ...
 
 ---
 
