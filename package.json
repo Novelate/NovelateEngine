@@ -1,0 +1,19 @@
+{
+	"name": "novelate",
+	"description": "A flexible and dynamic visual novel engine using D and SFML (DSFML).",
+	"authors": [
+		"Jacob Jensen"
+	],
+	"homepage": "https://novelate.com/",
+	"license": "The MIT License (MIT)",
+	"copyright": "Copyright © 2020 Novelate",
+	"targetType": "sourceLibrary",
+	"sourcePaths": [
+		"source"
+	],
+	"dependencies": {
+    "dsfml": {
+			"path": "external/dsfml"
+		}
+	}
+}
