@@ -4,11 +4,15 @@
 
 Website: [https://novelate.com/](https://novelate.com/) (Coming Soon)
 
-Novelate is an open-source visual novel framework and engine, written in the D programming language using bindings to SFML (DSFML.) and can be used freely for personal and commercial projects.
+Novelate is an open-source visual novel framework and engine, written in the D programming language and can be used freely for personal and commercial projects.
+
+It currently has an official binding to SFML (DSFML) but Novelate was made in a way that interacing with other libraries such as SDL etc. is possible and will officially be supported in the future.
+
+This will help Novelate being able to be implemented in existing engines and games.
 
 *The project began all the way back in 2013 but was quickly abandonded afterwards due to personal reasons back then. It was under a different name and was never published.*
 
-*Novelate is basically a complete remake of the engine back then and instead of using SDL it uses SFML.*
+*Novelate is basically a complete remake of the engine back then. Instead of officially using SDL then it officially uses SFML, however SDL support is coming.*
 
 The bindings to SFML are through DSFMLusing version 2.1.1 (Apr. 19th 2016) in case the original project stagnates entirely or goes through breaking changes. That is also the latest release for the binding other than the master itself which is not stable.
 
@@ -361,8 +365,10 @@ To compile on Windows x86 you can simply use **dub build** on a project with the
   "sourcePaths": ["source"],
   "stringImportPaths": ["story", "config"],
   "lflags" : ["+libs\\"],
+  "versions": ["NOVELATE_SFML"],
   "dependencies": {
-    "novelate": "0.0.3"
+    "novelate": "0.0.4",
+    "dsfml": "2.1.1"
   }
 }
 ```

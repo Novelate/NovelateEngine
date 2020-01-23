@@ -15,13 +15,6 @@ module novelate.play;
 import std.array : split;
 import std.conv : to;
 
-import dsfml.system : Vector2f;
-import dsfml.audio : Music;
-import dsfml.window : Event, Keyboard, Mouse;
-
-public alias MouseButton = Mouse.Button;
-public alias Key = Keyboard.Key;
-
 import novelate.config;
 import novelate.scene;
 import novelate.media;
@@ -39,6 +32,8 @@ import novelate.events;
 import novelate.core : getLayer, LayerType, clearTempLayers, setTempLayers, Screen;
 import novelate.state : nextScene, endGame, playScene, changeTempScreen;
 
+import novelate.external;
+
 private
 {
   /// The current scene.
@@ -48,7 +43,7 @@ private
   /// The current background.
   string _background;
   /// The current music stream.
-  Music _currentMusic;
+  ExternalMusic _currentMusic;
 }
 
 package(novelate):
@@ -89,11 +84,11 @@ void changeScene(string sceneName)
         _currentMusic.stop();
       }
 
-      _currentMusic = new Music();
+      _currentMusic = new ExternalMusic();
 
-      if (_currentMusic.openFromFile(to!string(_music)))
+      if (_currentMusic.openFromFile(_music))
       {
-        _currentMusic.isLooping = true;
+        _currentMusic.looping = true;
 
         _currentMusic.play();
       }
@@ -154,7 +149,7 @@ void changeScene(string sceneName)
   auto dialogueBox = new DialogueBox;
   dialogueBox.globalKeyRelease = (k, ref b)
   {
-    if (k == Key.BackSpace || k == Key.Escape)
+    if (k == KeyboardKey.backSpace || k == KeyboardKey.escape)
     {
       setTempLayers();
 
@@ -289,15 +284,15 @@ void changeScene(string sceneName)
               switch (nextSpritePosition)
               {
                 case "Left":
-                  image.position = Vector2f(12, backgroundLayer.height - imgSize.y);
+                  image.position = FloatVector(12, backgroundLayer.height - imgSize.y);
                   break;
 
                 case "Right":
-                  image.position = Vector2f(backgroundLayer.width - (12 + imgSize.x), backgroundLayer.height - imgSize.y);
+                  image.position = FloatVector(backgroundLayer.width - (12 + imgSize.x), backgroundLayer.height - imgSize.y);
                   break;
 
                 case "Center":
-                  image.position = Vector2f((backgroundLayer.width / 2) - (imgSize.x / 2), backgroundLayer.height - imgSize.y);
+                  image.position = FloatVector((backgroundLayer.width / 2) - (imgSize.x / 2), backgroundLayer.height - imgSize.y);
                   break;
 
                   default: break;
@@ -334,7 +329,7 @@ void changeScene(string sceneName)
               optionY += config.defaultDialogueTextFontSize * dialogueBoxInteractionLayer.length;
               optionY += 8 * dialogueBoxInteractionLayer.length;
 
-              optionLabel.position = Vector2f(nameLabel.x, cast(float)optionY);
+              optionLabel.position = FloatVector(nameLabel.x, cast(float)optionY);
               optionLabel.mouseRelease = (b, ref s)
               {
                 nextScene = optionSceneName;

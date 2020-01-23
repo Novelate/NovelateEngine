@@ -10,8 +10,5 @@
 	"targetType": "sourceLibrary",
 	"sourcePaths": [
 		"source"
-	],
-	"dependencies": {
-    "dsfml": "2.1.1"
-	}
+	]
 }

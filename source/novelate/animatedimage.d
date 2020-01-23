@@ -14,9 +14,6 @@ module novelate.animatedimage;
 
 import std.conv : to;
 
-import dsfml.graphics : Sprite, Image, Texture, RenderWindow, Color;
-import dsfml.system : Vector2f, Vector2u;
-
 import novelate.component;
 
 /// An animated image component.
@@ -24,13 +21,9 @@ final class AnimatedImage : Component
 {
   private:
   /// The images for each frame.
-  Image[] _images;
+  ExternalImage[] _images;
   /// The current frame.
   size_t _currentFrame;
-  /// The textures for each frame.
-  Texture[] _textures;
-  /// The sprites for each frame.
-  Sprite[] _sprites;
   /// Boolean determining whether the animation is full-screen or not.
   bool _fullScreen;
   /// The alpha channel of the animation.
@@ -55,19 +48,10 @@ final class AnimatedImage : Component
   {
     foreach (path; paths)
     {
-      auto image = new Image();
-      image.loadFromFile(to!string(path));
-      _images ~= image;
+      auto externalImage = new ExternalImage;
+      externalImage.loadFromFile(path);
 
-      auto texture = new Texture();
-  		texture.loadFromImage(image);
-  		texture.setSmooth(true);
-
-      _textures ~= texture;
-
-      auto sprite = new Sprite(texture);
-      sprite.position = Vector2f(0, 0);
-      _sprites ~= sprite;
+      _images ~= externalImage;
     }
 
     _alpha = 255;
@@ -75,9 +59,10 @@ final class AnimatedImage : Component
     _currentFrame = 0;
     _animationSpeed = 100;
 
-    auto firstSprite = _sprites[0];
+    auto firstImage = _images[0];
+    auto firstBounds = firstImage.bounds;
 
-    super(firstSprite.getLocalBounds().width, firstSprite.getLocalBounds().height);
+    super(firstBounds.x, firstBounds.y);
   }
 
   @property
@@ -90,9 +75,6 @@ final class AnimatedImage : Component
     {
       _animationSpeed = newAnimationSpeed;
     }
-
-    /// Gets the raw image size. (Takes first frame.)
-    Vector2u rawImageSize() { return _images[0].getSize(); }
 
     /// Gets a boolean determining whether the animation is full-screen or not.
     bool fullScreen() { return _fullScreen; }
@@ -111,9 +93,9 @@ final class AnimatedImage : Component
     {
       _alpha = newAlpha;
 
-      foreach (sprite; _sprites)
+      foreach (image; _images)
       {
-        sprite.color = Color(255, 255, 255, _alpha);
+        image.color = Paint(255, 255, 255, _alpha);
       }
     }
   }
@@ -162,17 +144,17 @@ final class AnimatedImage : Component
   }
 
   /// See: Component.render()
-  override void render(RenderWindow window)
+  override void render(ExternalWindow window)
   {
-    if (_sprites && _sprites.length)
+    if (_images && _images.length)
     {
-      if (_currentFrame >= _sprites.length)
+      if (_currentFrame >= _images.length)
       {
         _currentFrame = 0;
       }
     }
 
-    auto sprite = _sprites && _sprites.length ? _sprites[_currentFrame] : null;
+    auto sprite = _images && _images.length ? _images[_currentFrame] : null;
 
     if (sprite)
     {
@@ -229,7 +211,7 @@ final class AnimatedImage : Component
         alpha = cast(ubyte)oldAlpha;
       }
 
-      window.draw(sprite);
+      sprite.draw(window);
     }
   }
 
@@ -241,13 +223,15 @@ final class AnimatedImage : Component
       return;
     }
 
-    foreach (sprite; _sprites)
+    foreach (sprite; _images)
     {
+      auto bounds = sprite.bounds;
+
       sprite.scale =
-      Vector2f
+      FloatVector
       (
-        cast(int)width / sprite.getLocalBounds().width,
-        cast(int)height / sprite.getLocalBounds().height
+        cast(int)width / bounds.x,
+        cast(int)height / bounds.y
       );
     }
   }
@@ -260,13 +244,15 @@ final class AnimatedImage : Component
       return;
     }
 
-    foreach (sprite; _sprites)
+    foreach (sprite; _images)
     {
+      auto bounds = sprite.bounds;
+
       sprite.scale =
-      Vector2f
+      FloatVector
       (
-        cast(int)super.width / sprite.getLocalBounds().width,
-        cast(int)super.height / sprite.getLocalBounds().height
+        cast(int)super.width / bounds.x,
+        cast(int)super.height / bounds.y
       );
     }
   }
@@ -292,13 +278,13 @@ final class AnimatedImage : Component
     auto newWidth = round(src.x * rnd);
     auto newHeight = round(src.y * rnd);
 
-    super.size = Vector2f(newWidth, newHeight);
+    super.size = FloatVector(newWidth, newHeight);
   }
 
   /// See: Component.updatePosition()
   override void updatePosition()
   {
-    foreach (sprite; _sprites)
+    foreach (sprite; _images)
     {
       sprite.position = super.position;
     }

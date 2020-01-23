@@ -14,9 +14,6 @@ module novelate.imagecomponent;
 
 import std.conv : to;
 
-import dsfml.graphics : Sprite, Image, Texture, RenderWindow, Color;
-import dsfml.system : Vector2f, Vector2u;
-
 import novelate.component;
 
 /// Wrapepr around an image component.
@@ -24,11 +21,7 @@ final class ImageComponent : Component
 {
   private:
   /// The image.
-  Image _image;
-  /// The texture.
-  Texture _texture;
-  /// The sprite.
-  Sprite _sprite;
+  ExternalImage _image;
   /// Boolean determining whether the image is full-screen or not.
   bool _fullScreen;
   /// The alpha channel.
@@ -47,25 +40,19 @@ final class ImageComponent : Component
   */
   this(string path)
   {
-    _image = new Image();
-    _image.loadFromFile(to!string(path));
+    _image = new ExternalImage();
+    _image.loadFromFile(path);
+    _image.position = FloatVector(0, 0);
 
-    _texture = new Texture();
-		_texture.loadFromImage(_image);
-		_texture.setSmooth(true);
-
-		_sprite = new Sprite(_texture);
-    _sprite.position = Vector2f(0, 0);
     _alpha = 255;
 
-    super(_sprite.getLocalBounds().width, _sprite.getLocalBounds().height);
+    auto bounds = _image.bounds;
+
+    super(bounds.x, bounds.y);
   }
 
   @property
   {
-    /// Gets the raw image size.
-    Vector2u rawImageSize() { return _image.getSize(); }
-
     /// Gets a boolean determining whether the image is full-screen or not.
     bool fullScreen() { return _fullScreen; }
 
@@ -81,7 +68,7 @@ final class ImageComponent : Component
     {
       _alpha = newAlpha;
 
-      _sprite.color = Color(255, 255, 255, _alpha);
+      _image.color = Paint(255, 255, 255, _alpha);
     }
   }
 
@@ -129,9 +116,9 @@ final class ImageComponent : Component
   }
 
   /// See: Component.render()
-  override void render(RenderWindow window)
+  override void render(ExternalWindow window)
   {
-    if (_sprite)
+    if (_image)
     {
       ptrdiff_t oldAlpha = cast(ptrdiff_t)_alpha;
 
@@ -178,7 +165,7 @@ final class ImageComponent : Component
         alpha = cast(ubyte)oldAlpha;
       }
 
-      window.draw(_sprite);
+      _image.draw(window);
     }
   }
 
@@ -190,11 +177,13 @@ final class ImageComponent : Component
       return;
     }
 
-    _sprite.scale =
-    Vector2f
+    auto bounds = _image.bounds;
+
+    _image.scale =
+    FloatVector
     (
-      cast(int)width / _sprite.getLocalBounds().width,
-      cast(int)height / _sprite.getLocalBounds().height
+      cast(int)width / bounds.x,
+      cast(int)height / bounds.y
     );
   }
 
@@ -206,11 +195,13 @@ final class ImageComponent : Component
       return;
     }
 
-    _sprite.scale =
-    Vector2f
+    auto bounds = _image.bounds;
+
+    _image.scale =
+    FloatVector
     (
-      cast(int)super.width / _sprite.getLocalBounds().width,
-      cast(int)super.height / _sprite.getLocalBounds().height
+      cast(int)super.width / bounds.x,
+      cast(int)super.height / bounds.y
     );
   }
 
@@ -229,12 +220,12 @@ final class ImageComponent : Component
     auto newWidth = round(src.x * rnd);
     auto newHeight = round(src.y * rnd);
 
-    super.size = Vector2f(newWidth, newHeight);
+    super.size = FloatVector(newWidth, newHeight);
   }
 
   /// See: Component.updatePosition()
   override void updatePosition()
   {
-    _sprite.position = super.position;
+    _image.position = super.position;
   }
 }

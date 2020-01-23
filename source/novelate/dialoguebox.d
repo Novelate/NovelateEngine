@@ -12,9 +12,6 @@
 */
 module novelate.dialoguebox;
 
-import dsfml.graphics : RectangleShape, Color, RenderWindow;
-import dsfml.system : Vector2f;
-
 import novelate.component;
 
 /// A dialogue box component.
@@ -22,9 +19,9 @@ final class DialogueBox : Component
 {
   private:
   /// The rectangle shape used for the dialogue box.
-  RectangleShape _rect;
+  ExternalRectangleShape _rect;
   /// The color of the dialogue box.
-  Color _color;
+  Paint _color;
 
   public:
   final:
@@ -35,17 +32,17 @@ final class DialogueBox : Component
     {
       super();
 
-      _rect = new RectangleShape(Vector2f(cast(float)0, cast(float)0));
+      _rect = new ExternalRectangleShape(FloatVector(cast(float)0, cast(float)0));
     }
   }
 
   @property
   {
     /// Gets the color of the dialogue box.
-    Color color() { return _color; }
+    Paint color() { return _color; }
 
     /// Sets the color of the dialogue box.
-    void color(Color newColor)
+    void color(Paint newColor)
     {
       _color = newColor;
 
@@ -54,9 +51,9 @@ final class DialogueBox : Component
   }
 
   /// See: Component.render()
-  override void render(RenderWindow window)
+  override void render(ExternalWindow window)
   {
-    window.draw(_rect);
+    _rect.draw(window);
   }
 
   /// See: Component.refresh()
@@ -66,18 +63,18 @@ final class DialogueBox : Component
 
     if (width == 800)
     {
-      super.size = Vector2f(width - (config.defaultDialogueMargin * 2), config.defaultDialogueHeight800);
+      super.size = FloatVector(width - (config.defaultDialogueMargin * 2), config.defaultDialogueHeight800);
     }
     else if (width == 1024)
     {
-      super.size = Vector2f(width - (config.defaultDialogueMargin * 2), config.defaultDialogueHeight1024);
+      super.size = FloatVector(width - (config.defaultDialogueMargin * 2), config.defaultDialogueHeight1024);
     }
     else if (width == 1280)
     {
-      super.size = Vector2f(width - (config.defaultDialogueMargin * 2), config.defaultDialogueHeight1280);
+      super.size = FloatVector(width - (config.defaultDialogueMargin * 2), config.defaultDialogueHeight1280);
     }
 
-    super.position = Vector2f
+    super.position = FloatVector
     (
       (width / 2) - (super.width / 2),
       height - (super.height + config.defaultDialogueMargin)
@@ -87,7 +84,7 @@ final class DialogueBox : Component
   /// See: Component.updateSize()
   override void updateSize()
   {
-    _rect = new RectangleShape(Vector2f(cast(float)super.width, cast(float)super.height));
+    _rect = new ExternalRectangleShape(FloatVector(cast(float)super.width, cast(float)super.height));
     _rect.fillColor = _color;
 
     updatePosition();
@@ -96,6 +93,6 @@ final class DialogueBox : Component
   /// See: Component.updatePosition()
   override void updatePosition()
   {
-    _rect.position = Vector2f(cast(float)super.x, cast(float)super.y);
+    _rect.position = FloatVector(cast(float)super.x, cast(float)super.y);
   }
 }

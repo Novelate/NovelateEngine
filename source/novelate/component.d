@@ -12,23 +12,16 @@
 */
 module novelate.component;
 
-import dsfml.graphics : RenderWindow;
-import dsfml.system : Vector2f;
-import dsfml.window : Event, Keyboard, Mouse;
-
-/// Alias for DSFML's mouse button.
-public alias MouseButton = Mouse.Button;
-/// Alias for DSFML's keyboard key.
-public alias Key = Keyboard.Key;
+public import novelate.external;
 
 /// A component.
 abstract class Component
 {
   private:
   /// The position.
-  Vector2f _position;
+  FloatVector _position;
   /// The size.
-  Vector2f _size;
+  FloatVector _size;
 
   protected:
   /// Creates a new component.
@@ -45,7 +38,7 @@ abstract class Component
   */
   this(float width, float height)
   {
-    _size = Vector2f(width, height);
+    _size = FloatVector(width, height);
   }
 
   public:
@@ -54,10 +47,10 @@ abstract class Component
     @property
     {
       /// Gets the position.
-      Vector2f position() { return _position; }
+      FloatVector position() { return _position; }
 
       /// Sets the position.
-      void position(Vector2f newPosition)
+      void position(FloatVector newPosition)
       {
         _position = newPosition;
 
@@ -71,10 +64,10 @@ abstract class Component
       ptrdiff_t y() { return cast(ptrdiff_t)_position.y; }
 
       /// Gets the size.
-      Vector2f size() { return _size; }
+      FloatVector size() { return _size; }
 
       /// Sets the size.
-      void size(Vector2f newSize)
+      void size(FloatVector newSize)
       {
         _size = newSize;
 
@@ -95,7 +88,7 @@ abstract class Component
     * Returns:
     *   True if the component intersects with the specific point, false otherwise.
     */
-    bool intersect(Vector2f p)
+    bool intersect(FloatVector p)
     {
       return (p.x > this.x) &&
   			(p.x < (this.x + cast(ptrdiff_t)this.width)) &&
@@ -108,7 +101,7 @@ abstract class Component
     * Params:
     *   position = The position to set the internal position as.
     */
-    protected void updateInternalPosition(Vector2f position)
+    protected void updateInternalPosition(FloatVector position)
     {
       _position = position;
     }
@@ -119,21 +112,21 @@ abstract class Component
   /// Handler for global mouse release events.
   void delegate(MouseButton button, ref bool stopEvent) globalMouseRelease;
   /// Handler for global mouse movement events.
-  void delegate(Vector2f position, ref bool stopEvent) globalMouseMove;
+  void delegate(FloatVector position, ref bool stopEvent) globalMouseMove;
   /// Handler for global key press events.
-  void delegate(Key key, ref bool stopEvent) globalKeyPress;
+  void delegate(KeyboardKey key, ref bool stopEvent) globalKeyPress;
   /// Handler for global key release events.
-  void delegate(Key key, ref bool stopEvent) globalKeyRelease;
+  void delegate(KeyboardKey key, ref bool stopEvent) globalKeyRelease;
   /// Handler for mouse press events.
   void delegate(MouseButton button, ref bool stopEvent) mousePress;
   /// Handler for mouse release events.
   void delegate(MouseButton button, ref bool stopEvent) mouseRelease;
   /// Handler for mouse movement events.
-  void delegate(Vector2f position, ref bool stopEvent) mouseMove;
+  void delegate(FloatVector position, ref bool stopEvent) mouseMove;
   /// Handler for key press events.
-  void delegate(Key key, ref bool stopEvent) keyPress;
+  void delegate(KeyboardKey key, ref bool stopEvent) keyPress;
   /// Handler for key release events.
-  void delegate(Key key, ref bool stopEvent) keyRelease;
+  void delegate(KeyboardKey key, ref bool stopEvent) keyRelease;
 
   abstract:
   /**
@@ -141,7 +134,7 @@ abstract class Component
   * Params:
   *   window = The window used for rendering.
   */
-  void render(RenderWindow window);
+  void render(ExternalWindow window);
   /**
   * Refreshes the component with a given width ahd height. This is usually the layer size which is usually the window size.
   * Params:

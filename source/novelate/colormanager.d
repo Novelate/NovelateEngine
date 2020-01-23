@@ -15,7 +15,7 @@ module novelate.colormanager;
 import std.array : split;
 import std.conv : to;
 
-import dsfml.graphics : Color;
+import novelate.external;
 
 /**
 * Creates a color from given RGBA channels.
@@ -27,9 +27,9 @@ import dsfml.graphics : Color;
 *  Returns:
 *   The color created.
 */
-Color colorFromRGBA(ubyte r, ubyte g, ubyte b, ubyte a = 0xff)
+Paint colorFromRGBA(ubyte r, ubyte g, ubyte b, ubyte a = 0xff)
 {
-  return Color(r, g, b, a);
+  return Paint(r, g, b, a);
 }
 
 /**
@@ -39,7 +39,7 @@ Color colorFromRGBA(ubyte r, ubyte g, ubyte b, ubyte a = 0xff)
 *  Returns:
 *   The color created.
 */
-Color colorFromString(string color)
+Paint colorFromString(string color)
 {
   auto data = color.split(",");
 

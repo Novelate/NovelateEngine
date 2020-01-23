@@ -12,9 +12,6 @@
 */
 module novelate.timedtext;
 
-import dsfml.graphics : Text, RenderWindow, Color;
-import dsfml.system : Vector2f;
-
 import novelate.component;
 import novelate.fonts;
 import novelate.config;
@@ -29,7 +26,7 @@ final class TimedText : Component
 {
   private:
   /// The text component.
-  Text _textComponent;
+  ExternalText _textComponent;
   /// The original text without wrapping.
   dstring _originalText;
   /// The text with wrapping.
@@ -39,7 +36,7 @@ final class TimedText : Component
   /// The font name.
   string _fontName;
   /// The font.
-  Font _font;
+  ExternalFont _font;
   /// The font size.
   size_t _fontSize;
   /// The box width.
@@ -47,7 +44,7 @@ final class TimedText : Component
   /// Boolean determining whether the text has finished rendering.
   bool _hasFinished;
   /// The color.
-  Color _color;
+  Paint _color;
 
   public:
   final:
@@ -62,23 +59,24 @@ final class TimedText : Component
     _font = retrieveFont(_fontName, FontStyle.normal);
     _fontSize = config.defaultFontSize;
 
-    _textComponent = new Text();
+    _textComponent = new ExternalText;
     _textComponent.setFont(_font);
     _textComponent.setString("");
-    _textComponent.setCharacterSize(cast(uint) _fontSize);
+    _textComponent.setCharacterSize(_fontSize);
+
     _textCount = 1;
 
     super.globalKeyRelease = (k, ref s)
     {
-      if (k == Key.Return || k == Key.Space)
+      if (k == KeyboardKey.returnKey || k == KeyboardKey.space)
       {
-        super.globalMouseRelease(MouseButton.Left, s);
+        super.globalMouseRelease(MouseButton.left, s);
       }
     };
 
     super.globalMouseRelease = (b, ref s)
     {
-      if (b != MouseButton.Left)
+      if (b != MouseButton.left)
       {
         return;
       }
@@ -121,7 +119,7 @@ final class TimedText : Component
     void text(dstring newText)
     {
       _originalText = newText;
-      _text = wrapableText(_originalText, _fontName, cast(uint) _fontSize, _boxWidth);
+      _text = wrapableText(_originalText, _fontName, _fontSize, _boxWidth);
       _textCount = 1;
       _hasFinished = false;
     }
@@ -146,14 +144,14 @@ final class TimedText : Component
     {
       _fontSize = newFontSize;
 
-      _textComponent.setCharacterSize(cast(uint) _fontSize);
+      _textComponent.setCharacterSize(_fontSize);
     }
 
     /// Gets the color.
-    Color color() { return _color; }
+    Paint color() { return _color; }
 
     /// Sets the color.
-    void color(Color newColor)
+    void color(Paint newColor)
     {
       _color = newColor;
 
@@ -165,7 +163,7 @@ final class TimedText : Component
   private size_t _fpsCounter = 0;
 
   /// See: Component.render()
-  override void render(RenderWindow window)
+  override void render(ExternalWindow window)
   {
     if (!_hasFinished)
     {
@@ -191,7 +189,7 @@ final class TimedText : Component
       }
     }
 
-    window.draw(_textComponent);
+    _textComponent.draw(window);
   }
 
   /// See: Component.refresh()
@@ -216,9 +214,9 @@ final class TimedText : Component
 
      boxHeight -= cast(size_t)(cast(double)config.defaultDialogueNameFontSize * 1.5);
 
-    _textComponent.position = Vector2f(config.defaultDialogueMargin + config.defaultDialoguePadding, ((height + config.defaultDialoguePadding) - boxHeight));
+    _textComponent.position = FloatVector(config.defaultDialogueMargin + config.defaultDialoguePadding, ((height + config.defaultDialoguePadding) - boxHeight));
 
-    _text = wrapableText(_originalText, _fontName, cast(uint) _fontSize, _boxWidth);
+    _text = wrapableText(_originalText, _fontName, _fontSize, _boxWidth);
 
     if (_text && _text.length)
     {

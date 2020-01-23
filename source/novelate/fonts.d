@@ -19,10 +19,10 @@ import std.path : stripExtension, baseName;
 import std.array : replace;
 import std.conv : to;
 
-public import dsfml.graphics : Font;
+public import novelate.external : ExternalFont;
 
 /// The font collection.
-private Font[string] _fonts;
+private ExternalFont[string] _fonts;
 
 /// Enumeration of font styles.
 enum FontStyle : string
@@ -59,7 +59,7 @@ void loadFonts(string path)
 * Returns:
 *   The loaded font.
 */
-Font loadFont(string path)
+ExternalFont loadFont(string path)
 {
   auto font = _fonts.get(path, null);
 
@@ -68,8 +68,8 @@ Font loadFont(string path)
     return font;
   }
 
-  font = new Font();
-  font.loadFromFile(to!string(path));
+  font = new ExternalFont;
+  font.loadFromFile(path);
 
   auto name = stripExtension(baseName(path));
 
@@ -88,7 +88,7 @@ Font loadFont(string path)
 * Returns:
 *   The retrieved font if found, null otherwise.
 */
-Font retrieveFont(string fontName, FontStyle style)
+ExternalFont retrieveFont(string fontName, FontStyle style)
 {
   return _fonts.get(fontName ~ style, null);
 }

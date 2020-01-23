@@ -18,9 +18,6 @@ import std.string : strip, stripLeft, stripRight, format;
 import std.algorithm : filter;
 import std.conv : to;
 
-import dsfml.graphics : RenderWindow, Color;
-import dsfml.window : VideoMode, ContextSettings, Window, Event, Keyboard, Mouse;
-
 import novelate.layer;
 import novelate.config;
 import novelate.mainmenu;
@@ -29,6 +26,8 @@ import novelate.state;
 import novelate.fonts;
 import novelate.parser;
 import novelate.events;
+import novelate.colormanager;
+import novelate.external;
 
 /// Enumeration of layer types. There are 10 available layers ranging from 0 - 9 as indexes. 7 is the largest named frame.
 enum LayerType : size_t
@@ -103,7 +102,7 @@ void changeResolution(size_t width, size_t height, bool fullScreen)
   _width = width;
   _height = height;
 
-  if (_window && _window.isOpen())
+  if (_window && _window.isOpen)
   {
     _window.close();
 
@@ -112,18 +111,9 @@ void changeResolution(size_t width, size_t height, bool fullScreen)
 
   write(config.dataFolder ~ "/res.ini", format("Width=%s\r\nHeight=%s\r\nFullScreen=%s", width, height, fullScreen));
 
-  _videoMode = VideoMode(cast(int)width, cast(int)height);
+  _window = ExternalWindow.create(_title, width, height, fullScreen);
 
-  if (fullScreen)
-  {
-    _window = new RenderWindow(_videoMode, _title, (Window.Style.Fullscreen), _context);
-  }
-  else
-  {
-    _window = new RenderWindow(_videoMode, _title, (Window.Style.Titlebar | Window.Style.Close), _context);
-  }
-
-  _window.setFramerateLimit(_fps);
+  _window.fps = _fps;
 
   if (_layers)
   {
@@ -208,8 +198,6 @@ void initialize()
 
   loadFonts(config.dataFolder ~ "/fonts");
 
-  _context.antialiasingLevel = 100;
-
   _title = config.gameTitle;
 
   if (config.gameSlogan && config.gameSlogan.length)
@@ -262,13 +250,100 @@ void initialize()
 /// Runs the game/event/UI loop.
 void run()
 {
-    auto backgroundColor = Color(0,0,0,0xff);
+    auto backgroundColor = colorFromRGBA(0,0,0,0xff);
 
     changeResolution(_width, _height, fullScreen);
 
     changeScreen(Screen.mainMenu);
 
-    while (running && _window && _window.isOpen())
+    auto manager = new ExternalEventManager;
+    manager.addHandler(ExternalEventType.closed, {
+      _window.close();
+    });
+
+    manager.addHandler(ExternalEventType.mouseMoved, {
+      if (selectedLayers && selectedLayers.length)
+      {
+        foreach_reverse (layer; selectedLayers)
+        {
+          bool stopEvent = false;
+
+          layer.mouseMove(ExternalEventState.mouseMoveEvent.x, ExternalEventState.mouseMoveEvent.y, stopEvent);
+
+          if (stopEvent)
+          {
+            break;
+          }
+        }
+      }
+    });
+    manager.addHandler(ExternalEventType.mouseButtonPressed, {
+      if (selectedLayers && selectedLayers.length)
+      {
+        foreach_reverse (layer; selectedLayers)
+        {
+          bool stopEvent = false;
+
+          layer.mousePress(ExternalEventState.mouseButtonEvent.button, stopEvent);
+
+          if (stopEvent)
+          {
+            break;
+          }
+        }
+      }
+    });
+    manager.addHandler(ExternalEventType.mouseButtonReleased, {
+      if (selectedLayers && selectedLayers.length)
+      {
+        foreach_reverse (layer; selectedLayers)
+        {
+          bool stopEvent = false;
+
+          layer.mouseRelease(ExternalEventState.mouseButtonEvent.button, stopEvent);
+
+          if (stopEvent)
+          {
+            break;
+          }
+        }
+      }
+    });
+
+    manager.addHandler(ExternalEventType.keyPressed, {
+      if (selectedLayers && selectedLayers.length)
+      {
+        foreach_reverse (layer; selectedLayers)
+        {
+          bool stopEvent = false;
+
+          layer.keyPress(ExternalEventState.keyEvent.code, stopEvent);
+
+          if (stopEvent)
+          {
+            break;
+          }
+        }
+      }
+    });
+    manager.addHandler(ExternalEventType.keyReleased, {
+      if (selectedLayers && selectedLayers.length)
+      {
+        foreach_reverse (layer; selectedLayers)
+        {
+          bool stopEvent = false;
+
+          layer.keyRelease(ExternalEventState.keyEvent.code, stopEvent);
+
+          if (stopEvent)
+          {
+            break;
+          }
+        }
+      }
+    });
+
+    while (running && _window && _window.isOpen)
     {
       if (exitGame)
       {
@@ -308,115 +383,9 @@ void run()
         nextScene = null;
       }
 
-      Event event;
-      while(_window.pollEvent(event))
+      if (!_window.processEvents(manager))
       {
-        switch (event.type)
-        {
-          case Event.EventType.Closed:
-          {
-            running = false;
-            _window.close();
-            goto exit;
-          }
-
-          case Event.EventType.MouseMoved:
-          {
-            if (selectedLayers && selectedLayers.length)
-            {
-              foreach_reverse (layer; selectedLayers)
-              {
-                bool stopEvent = false;
-
-                layer.mouseMove(event.mouseMove.x, event.mouseMove.y, stopEvent);
-
-                if (stopEvent)
-                {
-                  break;
-                }
-              }
-            }
-            break;
-          }
-
-          case Event.EventType.MouseButtonPressed:
-          {
-            if (selectedLayers && selectedLayers.length)
-            {
-              foreach_reverse (layer; selectedLayers)
-              {
-                bool stopEvent = false;
-
-                layer.mousePress(event.mouseButton.button, stopEvent);
-
-                if (stopEvent)
-                {
-                  break;
-                }
-              }
-            }
-            break;
-          }
-
-          case Event.EventType.MouseButtonReleased:
-          {
-            if (selectedLayers && selectedLayers.length)
-            {
-              foreach_reverse (layer; selectedLayers)
-              {
-                bool stopEvent = false;
-
-                layer.mouseRelease(event.mouseButton.button, stopEvent);
-
-                if (stopEvent)
-                {
-                  break;
-                }
-              }
-            }
-            break;
-          }
-
-          case Event.EventType.KeyPressed:
-          {
-            if (selectedLayers && selectedLayers.length)
-            {
-              foreach_reverse (layer; selectedLayers)
-              {
-                bool stopEvent = false;
-
-                layer.keyPress(event.key.code, stopEvent);
-
-                if (stopEvent)
-                {
-                  break;
-                }
-              }
-            }
-            break;
-          }
-
-          case Event.EventType.KeyReleased:
-          {
-            if (selectedLayers && selectedLayers.length)
-            {
-              foreach_reverse (layer; selectedLayers)
-              {
-                bool stopEvent = false;
-
-                layer.keyRelease(event.key.code, stopEvent);
-
-                if (stopEvent)
-                {
-                  break;
-                }
-              }
-            }
-            break;
-          }
-
-          default: break;
-        }
+        goto exit;
       }
 
       _window.clear(backgroundColor);
@@ -439,8 +408,7 @@ void run()
 
       fireEvent!(EventType.onRender);
 
-      _window.display();
+      _window.render();
     }
-
     exit:
 }

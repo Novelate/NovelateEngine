@@ -13,11 +13,10 @@
 */
 module novelate.state;
 
-import dsfml.graphics : RenderWindow;
-import dsfml.window : VideoMode, ContextSettings;
-
 import novelate.layer;
 import novelate.core : Screen;
+
+import novelate.external : ExternalWindow;
 
 package(novelate):
 
@@ -41,12 +40,8 @@ bool _isTempScreen = false;
 string playScene;
 /// Boolean determining whether the game is running.
 bool running = true;
-/// The context settings.
-ContextSettings _context;
-/// The video mode.
-VideoMode _videoMode;
 /// The render window.
-RenderWindow _window;
+ExternalWindow _window;
 /// The fps.
 const _fps = 60;
 /// The window title.

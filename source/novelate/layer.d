@@ -12,13 +12,6 @@
 */
 module novelate.layer;
 
-import dsfml.graphics : RenderWindow;
-import dsfml.system : Vector2f;
-import dsfml.window : Event, Keyboard, Mouse;
-
-public alias MouseButton = Mouse.Button;
-public alias Key = Keyboard.Key;
-
 import novelate.component;
 
 /// A layer of components.
@@ -32,7 +25,7 @@ final class Layer
   /// The height of the layer. Usually the resolution height.
   size_t _height;
   /// The current mouse position within the window.
-  Vector2f _mousePosition;
+  FloatVector _mousePosition;
 
   public:
   final:
@@ -122,7 +115,7 @@ final class Layer
   * Params:
   *   window = The window to render the components at.
   */
-  void render(RenderWindow window)
+  void render(ExternalWindow window)
   {
     if (!window)
     {
@@ -168,7 +161,7 @@ final class Layer
   *   key = The key pressed.
   *   stopEvent = (ref) Boolean determining whether the event handling should no longer be delegated.
   */
-  void keyPress(Key key, ref bool stopEvent)
+  void keyPress(KeyboardKey key, ref bool stopEvent)
   {
     if (!_components)
     {
@@ -205,7 +198,7 @@ final class Layer
   *   key = The key released.
   *   stopEvent = (ref) Boolean determining whether the event handling should no longer be delegated.
   */
-  void keyRelease(Key key, ref bool stopEvent)
+  void keyRelease(KeyboardKey key, ref bool stopEvent)
   {
     if (!_components)
     {
@@ -319,7 +312,7 @@ final class Layer
   */
   void mouseMove(ptrdiff_t x, ptrdiff_t y, ref bool stopEvent)
   {
-    _mousePosition = Vector2f(x, y);
+    _mousePosition = FloatVector(x, y);
 
     if (!_components)
     {

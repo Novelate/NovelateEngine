@@ -15,9 +15,8 @@ module novelate.textwrap;
 import std.uni : isWhite;
 import std.conv : to;
 
-import dsfml.graphics : Text;
-
 import novelate.fonts;
+import novelate.external : ExternalText;
 
 /**
 * Creates text that wraps when it exceeds a given width. It does so by adding a new line at the last space given before the text exceeds the width and does so for all of the text.
@@ -29,7 +28,7 @@ import novelate.fonts;
 * Returns:
 *   A string that is wrapable based on the original given string and conditions.
 */
-dstring wrapableText(dstring text, string fontName, uint fontSize, size_t width)
+dstring wrapableText(dstring text, string fontName, size_t fontSize, size_t width)
 {
   if (!text || !text.length)
   {
@@ -55,7 +54,7 @@ dstring wrapableText(dstring text, string fontName, uint fontSize, size_t width)
 
     if (!hasForeignCharacters && isForeighnCharacter)
     {
-      width -= cast(uint)(cast(double)fontSize * 1.2);
+      width -= cast(size_t)(cast(double)fontSize * 1.2);
 
       hasForeignCharacters = true;
     }
@@ -67,12 +66,12 @@ dstring wrapableText(dstring text, string fontName, uint fontSize, size_t width)
 
     calculateText ~= c;
 
-    Text textInstance = new Text();
+    auto textInstance = new ExternalText;
     textInstance.setFont(font);
     textInstance.setString(calculateText);
     textInstance.setCharacterSize(fontSize);
 
-    auto textWidth = textInstance.getLocalBounds().width;
+    auto textWidth = textInstance.bounds.x;
 
     if (textWidth >= width)
     {

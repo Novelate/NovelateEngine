@@ -14,9 +14,6 @@ module novelate.label;
 
 import std.datetime;
 
-import dsfml.graphics : Text, RenderWindow, Color;
-import dsfml.system : Vector2f;
-
 import novelate.component;
 import novelate.fonts;
 import novelate.config;
@@ -26,17 +23,17 @@ final class Label : Component
 {
   private:
   /// The text component.
-  Text _textComponent;
+  ExternalText _textComponent;
   /// The text.
   dstring _text;
   /// The font name.
   string _fontName;
   /// The font.
-  Font _font;
+  ExternalFont _font;
   /// The font size.
   size_t _fontSize;
   /// The color.
-  Color _color;
+  Paint _color;
 
   public:
   final:
@@ -49,10 +46,10 @@ final class Label : Component
     _font = retrieveFont(_fontName, FontStyle.normal);
     _fontSize = config.defaultFontSize;
 
-    _textComponent = new Text();
+    _textComponent = new ExternalText;
     _textComponent.setFont(_font);
     _textComponent.setString("");
-    _textComponent.setCharacterSize(cast(uint) _fontSize);
+    _textComponent.setCharacterSize(_fontSize);
   }
 
   @property
@@ -67,9 +64,9 @@ final class Label : Component
 
       _textComponent.setString(_text);
 
-      auto bounds = _textComponent.getLocalBounds();
+      auto bounds = _textComponent.bounds;
 
-      super.size = Vector2f(bounds.width, bounds.height);
+      super.size = FloatVector(bounds.x, bounds.y);
     }
 
     /// Gets the font name.
@@ -92,14 +89,14 @@ final class Label : Component
     {
       _fontSize = newFontSize;
 
-      _textComponent.setCharacterSize(cast(uint) _fontSize);
+      _textComponent.setCharacterSize(_fontSize);
     }
 
     /// Gets the color.
-    Color color() { return _color; }
+    Paint color() { return _color; }
 
     /// Sets the color.
-    void color(Color newColor)
+    void color(Paint newColor)
     {
       _color = newColor;
 
@@ -108,9 +105,9 @@ final class Label : Component
   }
 
   /// See: Component.render()
-  override void render(RenderWindow window)
+  override void render(ExternalWindow window)
   {
-    window.draw(_textComponent);
+    _textComponent.draw(window);
   }
 
   /// See: Component.refresh()
@@ -130,7 +127,7 @@ final class Label : Component
       boxHeight = config.defaultDialogueHeight1280;
     }
 
-    _textComponent.position = Vector2f(config.defaultDialogueMargin + config.defaultDialoguePadding, ((height + config.defaultDialoguePadding) - boxHeight));
+    _textComponent.position = FloatVector(config.defaultDialogueMargin + config.defaultDialoguePadding, ((height + config.defaultDialoguePadding) - boxHeight));
 
     updateInternalPosition(_textComponent.position);
   }

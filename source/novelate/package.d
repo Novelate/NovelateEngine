@@ -24,6 +24,7 @@ public
   import novelate.dialoguebox;
 
   import novelate.events;
+  import novelate.external;
 
   import novelate.files;
   import novelate.fonts;

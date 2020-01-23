@@ -14,9 +14,6 @@ module novelate.mainmenu;
 
 import std.conv : to;
 
-import dsfml.window : Keyboard, Mouse;
-import dsfml.system : Vector2f;
-
 import novelate.config;
 import novelate.imagecomponent;
 import novelate.animatedimage;
@@ -24,12 +21,10 @@ import novelate.media;
 import novelate.label;
 import novelate.colormanager;
 import novelate.layer;
+import novelate.external;
 
 import novelate.core : getLayer, LayerType, changeScreen, Screen;
 import novelate.state :   exitGame, playScene;
-
-public alias MouseButton = Mouse.Button;
-public alias Key = Keyboard.Key;
 
 package(novelate):
 /// Shows the main menu.
@@ -108,7 +103,7 @@ void showMainMenu()
       auto image = new AnimatedImage(logoImages);
       image.animationSpeed = frameSpeed;
       image.fadeIn(20);
-      image.position = Vector2f(config.menuLogoImageX800, config.menuLogoImageY800);
+      image.position = FloatVector(config.menuLogoImageX800, config.menuLogoImageY800);
 
       frontLayer.addComponent(image, "logo");
     }
@@ -223,7 +218,7 @@ void showMainMenu()
 
   foreach (label; labels)
   {
-    label.position = Vector2f(label.x, offsetY);
+    label.position = FloatVector(label.x, offsetY);
 
     offsetY += label.height;
     offsetY += cast(size_t)(cast(double)label.fontSize * 0.5);
@@ -250,7 +245,7 @@ private Label createLabel(string text, void delegate(MouseButton button, ref boo
     label.fontName = config.defaultFont;
   }
   label.text = to!dstring(text);
-  label.position = Vector2f(offsetX - (label.width / 2), 50000);
+  label.position = FloatVector(offsetX - (label.width / 2), 50000);
   label.mouseRelease = mouseRelease;
 
   return label;
