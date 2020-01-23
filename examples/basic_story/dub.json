@@ -4,7 +4,9 @@
   "sourcePaths": ["source"],
   "stringImportPaths": ["story", "config"],
   "lflags" : ["+libs\\"],
+  "versions": ["NOVELATE_CUSTOM_MAIN", "NOVELATE_SFML"],
   "dependencies": {
-    "novelate": "0.0.3"
+    "novelate": "0.0.4",
+    "dsfml": "2.1.1"
   }
 }
