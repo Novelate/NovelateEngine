@@ -10,17 +10,17 @@
 * Module Description:
 * This is the module for displaying the main menu.
 */
-module novelate.mainmenu;
+module novelate.screen.mainmenu;
 
 import std.conv : to;
 
 import novelate.config;
-import novelate.imagecomponent;
-import novelate.animatedimage;
+import novelate.ui.imagecomponent;
+import novelate.ui.animatedimage;
 import novelate.media;
-import novelate.label;
+import novelate.ui.label;
 import novelate.colormanager;
-import novelate.layer;
+import novelate.screen.layer;
 import novelate.external;
 
 import novelate.core : getLayer, LayerType, changeScreen, Screen;

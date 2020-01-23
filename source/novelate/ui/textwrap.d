@@ -10,7 +10,7 @@
 * Module Description:
 * This module handles text wrapping which is an essential feature when working with text that has to fit into a specific width. It's currently not a very performant algorithm but it gets the job done.
 */
-module novelate.textwrap;
+module novelate.ui.textwrap;
 
 import std.uni : isWhite;
 import std.conv : to;

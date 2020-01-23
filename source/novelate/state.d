@@ -13,7 +13,7 @@
 */
 module novelate.state;
 
-import novelate.layer;
+import novelate.screen.layer;
 import novelate.core : Screen;
 
 import novelate.external : ExternalWindow;

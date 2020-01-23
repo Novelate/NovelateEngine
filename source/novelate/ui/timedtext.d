@@ -10,12 +10,12 @@
 * Module Description:
 * A timed text component is useful for displaying text that is rendered over time looking like an automated typing animation.
 */
-module novelate.timedtext;
+module novelate.ui.timedtext;
 
-import novelate.component;
+import novelate.ui.component;
+import novelate.ui.textwrap;
 import novelate.fonts;
 import novelate.config;
-import novelate.textwrap;
 import novelate.queue;
 
 /// Alias for delegate handler.

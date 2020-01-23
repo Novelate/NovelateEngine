@@ -10,9 +10,9 @@
 * Module Description:
 * A layer consists of multiple components that have equal importance in terms of rendering and event delegation.
 */
-module novelate.layer;
+module novelate.screen.layer;
 
-import novelate.component;
+import novelate.ui.component;
 
 /// A layer of components.
 final class Layer

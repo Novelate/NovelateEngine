@@ -10,11 +10,11 @@
 * Module Description:
 * A label is a simple component for displaying text.
 */
-module novelate.label;
+module novelate.ui.label;
 
 import std.datetime;
 
-import novelate.component;
+import novelate.ui.component;
 import novelate.fonts;
 import novelate.config;
 

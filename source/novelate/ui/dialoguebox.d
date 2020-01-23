@@ -10,9 +10,9 @@
 * Module Description:
 * A dialogue box is the box that is used to display the dialogues.
 */
-module novelate.dialoguebox;
+module novelate.ui.dialoguebox;
 
-import novelate.component;
+import novelate.ui.component;
 
 /// A dialogue box component.
 final class DialogueBox : Component
