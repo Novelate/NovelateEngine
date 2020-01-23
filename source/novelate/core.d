@@ -18,10 +18,8 @@ import std.string : strip, stripLeft, stripRight, format;
 import std.algorithm : filter;
 import std.conv : to;
 
-import novelate.layer;
+import novelate.screen;
 import novelate.config;
-import novelate.mainmenu;
-import novelate.play;
 import novelate.state;
 import novelate.fonts;
 import novelate.parser;

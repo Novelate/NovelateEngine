@@ -10,7 +10,7 @@
 * Module Description:
 * A component is an element that can be rendered on the screen with optional event handlers etc.
 */
-module novelate.component;
+module novelate.ui.component;
 
 public import novelate.external;
 

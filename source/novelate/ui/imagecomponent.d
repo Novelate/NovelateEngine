@@ -10,11 +10,11 @@
 * Module Description:
 * An image component allows for images to be rendered with a set of extra features and flexibility such as fading etc.
 */
-module novelate.imagecomponent;
+module novelate.ui.imagecomponent;
 
 import std.conv : to;
 
-import novelate.component;
+import novelate.ui.component;
 
 /// Wrapepr around an image component.
 final class ImageComponent : Component

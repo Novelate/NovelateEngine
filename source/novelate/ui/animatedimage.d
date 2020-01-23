@@ -10,11 +10,11 @@
 * Module Description:
 * An animated image component is basically a wrapper around multiple images that are displayed in order to create an animation.
 */
-module novelate.animatedimage;
+module novelate.ui.animatedimage;
 
 import std.conv : to;
 
-import novelate.component;
+import novelate.ui.component;
 
 /// An animated image component.
 final class AnimatedImage : Component

@@ -10,7 +10,7 @@
 * Module Description:
 * This module handles the core game play of the visual novel.
 */
-module novelate.play;
+module novelate.screen.play;
 
 import std.array : split;
 import std.conv : to;
@@ -19,14 +19,14 @@ import novelate.config;
 import novelate.scene;
 import novelate.media;
 import novelate.music;
-import novelate.imagecomponent;
-import novelate.dialoguebox;
+import novelate.ui.imagecomponent;
+import novelate.ui.dialoguebox;
 import novelate.colormanager;
-import novelate.timedtext;
+import novelate.ui.timedtext;
 import novelate.character;
 import novelate.queue;
-import novelate.label;
-import novelate.animatedimage;
+import novelate.ui.label;
+import novelate.ui.animatedimage;
 import novelate.events;
 
 import novelate.core : getLayer, LayerType, clearTempLayers, setTempLayers, Screen;
