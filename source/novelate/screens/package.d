@@ -10,11 +10,12 @@
 * Module Description:
 * The screen package.
 */
-module novelate.screen;
+module novelate.screens;
 
 public
 {
-  import novelate.screen.layer;
-  import novelate.screen.mainmenu;
-  import novelate.screen.play;
+  import novelate.screens.layer;
+  import novelate.screens.mainmenu;
+  import novelate.screens.play;
+  import novelate.screens.screen;
 }

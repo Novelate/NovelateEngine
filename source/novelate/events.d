@@ -15,8 +15,6 @@ module novelate.events;
 enum EventType : string
 {
   onSceneChange = "onSceneChange",
-  onTempScreenClear = "onTempScreenClear",
-  onTempScreenShow = "onTempScreenShow",
   onResolutionChange = "onResolutionChange",
   onLoadingCreditsVideo = "onLoadingCreditsVideo",
   onClearingAllLayersButBackground = "onClearingAllLayersButBackground",
@@ -29,8 +27,6 @@ private
   alias _EVENTDELEGATE = void delegate();
 
   _EVENTDELEGATE[] onSceneChange;
-  _EVENTDELEGATE[] onTempScreenClear;
-  _EVENTDELEGATE[] onTempScreenShow;
   _EVENTDELEGATE[] onResolutionChange;
   _EVENTDELEGATE[] onLoadingCreditsVideo;
   _EVENTDELEGATE[] onClearingAllLayersButBackground;
