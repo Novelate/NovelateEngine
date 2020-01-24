@@ -1,6 +1,6 @@
 {
 	"name": "novelate",
-	"description": "A flexible and dynamic visual novel engine using D and SFML (DSFML).",
+	"description": "A flexible and dynamic cross-platform visual novel engine using D.",
 	"authors": [
 		"Jacob Jensen"
 	],

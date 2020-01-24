@@ -4,7 +4,9 @@
 
 Website: [https://novelate.com/](https://novelate.com/) (Coming Soon)
 
-Novelate is an open-source visual novel framework and engine, written in the D programming language and can be used freely for personal and commercial projects.
+Novelate is a free open-source cross-platform visual novel framework and engine, written in the D programming language and can be used freely for personal and commercial projects.
+
+There are currently only Windows (x86 / x64) build examples but it's possible to compile to other platforms such as Linux, macOS etc.
 
 It currently has an official binding to SFML (DSFML) but Novelate was made in a way that interacing with other libraries such as SDL etc. is possible and will officially be supported in the future.
 
@@ -14,7 +16,7 @@ This will help Novelate being able to be implemented in existing engines and gam
 
 *Novelate is basically a complete remake of the engine back then. Instead of officially using SDL then it officially uses SFML, however SDL support is coming.*
 
-The bindings to SFML are through DSFMLusing version 2.1.1 (Apr. 19th 2016) in case the original project stagnates entirely or goes through breaking changes. That is also the latest release for the binding other than the master itself which is not stable.
+The bindings to SFML are through DSFML using version 2.1.1 (Apr. 19th 2016) in case the original project stagnates entirely or goes through breaking changes. That is also the latest release for the binding other than the master itself which is not stable.
 
 ***The engine itself is not currently stable and still in early development, however it has some of the basic functionality done. This also means not all configurations etc. are supported yet.***
 
@@ -348,15 +350,15 @@ story/story.txt
 
 ## Compiling A Game
 
-Currently there are no examples on compiling a game on any other platforms other than Windows (x86).
+Currently there are no examples on compiling a game on any other platforms other than Windows.
 
 Examples for other platforms and architectures will be given later.
 
 You can see https://dlang.org/ and/or https://code.dlang.org/ for compiler instructions and project configurations that can be used in order to compile games using different configurations than given.
 
-### Windows (x86)
+### Windows (SFML - DSFML)
 
-To compile on Windows x86 you can simply use **dub build** on a project with the following **dub.json**
+The following **dub.json** will allow both x86 and x64 builds on Windows using SFML (DSFML).
 
 ```
 {
@@ -364,20 +366,55 @@ To compile on Windows x86 you can simply use **dub build** on a project with the
   "targetType": "executable",
   "sourcePaths": ["source"],
   "stringImportPaths": ["story", "config"],
-  "lflags" : ["+libs\\"],
-  "versions": ["NOVELATE_SFML"],
+  "versions": ["NOVELATE_CUSTOM_MAIN"],
   "dependencies": {
-    "novelate": "0.0.4",
-    "dsfml": "2.1.1"
-  }
+    "novelate": "0.0.5"
+  },
+  "configurations": [{
+    "name": "win_dsfml_x64",
+    "versions": ["NOVELATE_SFML"],
+    "lflags" : ["/LIBPATH:libs_win_dsfml_x64"],
+    "copyFiles": ["dll_win_dsfml_x64/*"],
+    "dependencies": {
+      "dsfml": "2.1.1"
+    }
+  }, {
+    "name": "win_dsfml_x86",
+    "versions": ["NOVELATE_SFML"],
+    "lflags": ["+libs_win_dsfml_x86\\"],
+    "copyFiles": ["dll_win_dsfml_x86/*"],
+    "dependencies": {
+      "dsfml": "2.1.1"
+    }
+  }]
 }
 ```
 
-The lib files for DSFML must be present in a folder named **libs** that should be located in the root folder of the project.
+The lib files for DSFML must be present in a folder named either **libs_win_dsfml_x64** or **libs_win_dsfml_x86** depending on the architecture.
 
-#### Distributing A Game (Windows - x86)
+The same goes for dll files for DSFML, they must be present in a folder named either  **dll_win_dsfml_x64** or **dll_win_dsfml_x86** depending on the architecture.
 
-The files and folders when distributing a game should only include the output file (.exe), libraries (.dll) and the data folder (usually /data)
+The lib and dll folders must be located in the root folder of the project.
+
+These files can currently only be obtained here: http://dsfml.com/downloads.html
+
+However they will be available on the official website once launched.
+
+#### Compiling x86
+
+```
+dub build --config=win_dsfml_x86
+```
+
+### Compiling x64
+
+```
+dub build -a=x86_64 --config=win_dsfml_x64
+```
+
+### Distributing A Game
+
+The files and folders when distributing a game should only include the output file (.exe), libraries (.dll etc.) and the data folder (usually /data)
 
 *You don't need the Novelate files when publishing nor the project files or any source code.*
 
