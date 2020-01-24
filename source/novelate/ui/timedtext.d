@@ -33,6 +33,10 @@ final class TimedText : Component
   dstring _text;
   /// The text count.
   size_t _textCount;
+  /// The original text speed.
+  size_t _originalTextSpeed;
+  /// The text speed.
+  size_t _textSpeed;
   /// The font name.
   string _fontName;
   /// The font.
@@ -45,6 +49,8 @@ final class TimedText : Component
   bool _hasFinished;
   /// The color.
   Paint _color;
+  /// Boolean determining whether shift is held or not.
+  bool _shiftHeld;
 
   public:
   final:
@@ -65,12 +71,31 @@ final class TimedText : Component
     _textComponent.setCharacterSize(_fontSize);
 
     _textCount = 1;
+    _textSpeed = 1;
+
+    super.globalKeyPress = (k, ref s)
+    {
+      if (k == KeyboardKey.LShift)
+      {
+        _originalTextSpeed = _textSpeed;
+
+        _textSpeed *= 3;
+
+        _shiftHeld = true;
+      }
+    };
 
     super.globalKeyRelease = (k, ref s)
     {
       if (k == KeyboardKey.returnKey || k == KeyboardKey.space)
       {
         super.globalMouseRelease(MouseButton.left, s);
+      }
+      else if (k == KeyboardKey.LShift)
+      {
+        _textSpeed = _originalTextSpeed;
+
+        _shiftHeld = false;
       }
     };
 
@@ -157,6 +182,21 @@ final class TimedText : Component
 
       _textComponent.setColor(_color);
     }
+
+    /// Gets the text speed.
+    size_t textSpeed() { return _textSpeed; }
+
+    /// Sets the text speed.
+    void textSpeed(size_t newTextSpeed)
+    {
+      _textSpeed = newTextSpeed;
+      _originalTextSpeed = _textSpeed;
+
+      if (_shiftHeld)
+      {
+        _textSpeed *= 3;
+      }
+    }
   }
 
   /// Fps counter for when the text is rendering.
@@ -175,9 +215,14 @@ final class TimedText : Component
 
         if (_text && _text.length)
         {
+          if (_textCount > _text.length)
+          {
+            _textCount = _text.length;
+          }
+
           _textComponent.setString(_text[0 .. _textCount]);
 
-          _textCount++;
+          _textCount += _textSpeed;
 
           _hasFinished = _textCount >= _text.length;
 
@@ -226,6 +271,11 @@ final class TimedText : Component
       }
       else
       {
+        if (_textCount > _text.length)
+        {
+          _textCount = _text.length;
+        }
+
         _textComponent.setString(_text[0 .. _textCount]);
       }
     }
