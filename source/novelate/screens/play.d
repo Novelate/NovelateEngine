@@ -124,61 +124,15 @@ final class PlayScreen : Screen
       _background = _currentScene.background;
     }
 
-    auto backgroundLayer = getLayer(LayerType.background);
+    updateBackground(_background);
 
-    {
-      auto oldBackground = cast(ImageComponent)backgroundLayer.getComponent("background");
-
-      if (oldBackground)
-      {
-        backgroundLayer.addComponent(oldBackground, "background_old");
-        backgroundLayer.removeComponent("background");
-        oldBackground.fadeOut(20);
-      }
-    }
-
-    {
-      auto oldBackground = cast(AnimatedImage)backgroundLayer.getComponent("background");
-
-      if (oldBackground)
-      {
-        backgroundLayer.addComponent(oldBackground, "background_old");
-        backgroundLayer.removeComponent("background");
-        oldBackground.fadeOut(20);
-      }
-    }
-
-    if (_background && _background.length)
-    {
-      auto backgroundImage = getMediaFile(_background);
-
-      if (backgroundImage)
-      {
-        auto image = new ImageComponent(backgroundImage.relativePath(super.width));
-        image.fadeIn(20);
-        image.fadedIn = ()
-        {
-          backgroundLayer.removeComponent("background_old");
-        };
-        image.fullScreen = true;
-        image.refresh(super.width, super.height);
-
-        backgroundLayer.addComponent(image, "background");
-      }
-    }
-
-    auto dialogueBoxLayer = getLayer(LayerType.dialogueBox);
-    dialogueBoxLayer.removeComponent("dialogueBox");
+    removeComponent(LayerType.dialogueBox, "dialogueBox");
 
     auto dialogueBox = new DialogueBox;
     dialogueBox.globalKeyRelease = (k, ref b)
     {
       if (k == KeyboardKey.backSpace || k == KeyboardKey.escape)
       {
-        //setTempLayers();
-
-        //changeTempScreen = Screen.mainMenu;
-
         changeActiveScreen(StandardScreen.mainMenu);
       }
     };
@@ -187,10 +141,9 @@ final class PlayScreen : Screen
 
     dialogueBox.color = colorFromString(config.defaultDialogueBackground);
 
-    dialogueBoxLayer.addComponent(dialogueBox, "dialogueBox");
+    addComponent(LayerType.dialogueBox, dialogueBox, "dialogueBox");
 
-    auto dialogueBoxInteractionLayer = getLayer(LayerType.dialogueBoxInteraction);
-    dialogueBoxInteractionLayer.clear();
+    clear(LayerType.dialogueBoxInteraction);
 
     auto dialogueText = new TimedText;
     dialogueText.color = colorFromString(config.defaultDialogueColor);
@@ -201,7 +154,7 @@ final class PlayScreen : Screen
     }
     dialogueText.text = "";
     dialogueText.refresh(super.width, super.height);
-    dialogueBoxInteractionLayer.addComponent(dialogueText, "dialogueText");
+    addComponent(LayerType.dialogueBoxInteraction, dialogueText, "dialogueText");
 
     auto nameLabel = new Label;
     nameLabel.color = colorFromString(config.defaultDialogueColor);
@@ -212,14 +165,13 @@ final class PlayScreen : Screen
     }
     nameLabel.text = "";
     nameLabel.refresh(super.width, super.height);
-    dialogueBoxInteractionLayer.addComponent(nameLabel, "nameLabel");
+    addComponent(LayerType.dialogueBoxInteraction, nameLabel, "nameLabel");
 
     NovelateCharacter currentCharacter = null;
     string nextSpritePosition = "Left";
     bool keepSprite = false;
 
-    auto characterLayer = getLayer(LayerType.character);
-    characterLayer.clear();
+    clear(LayerType.character);
 
     Queue!NovelateSceneAction actionQueue = new Queue!NovelateSceneAction;
 
@@ -298,7 +250,7 @@ final class PlayScreen : Screen
               {
                 if (!keepSprite)
                 {
-                  characterLayer.clear();
+                  clear(LayerType.character);
                 }
 
                 keepSprite = false;
@@ -324,7 +276,7 @@ final class PlayScreen : Screen
                     default: break;
                 }
 
-                characterLayer.addComponent(image, "character_" ~ currentCharacter.name);
+                addComponent(LayerType.character, image, "character_" ~ currentCharacter.name);
                 break;
               }
 
@@ -336,8 +288,8 @@ final class PlayScreen : Screen
 
               case "Option":
               {
-                dialogueBoxInteractionLayer.removeComponent("dialogueText");
-                dialogueBoxInteractionLayer.removeComponent("nameLabel");
+                removeComponent(LayerType.dialogueBoxInteraction, "dialogueText");
+                removeComponent(LayerType.dialogueBoxInteraction, "nameLabel");
 
                 auto optionData = action.value.split("|");
                 auto optionSceneName = optionData[0];
@@ -350,17 +302,19 @@ final class PlayScreen : Screen
                 {
                   optionLabel.fontName = config.defaultDialogueTextFont;
                 }
+                auto dialogueBoxInteractionLayerLength = getLayer(LayerType.dialogueBoxInteraction).length;
+
                 optionLabel.text = to!dstring(optionText);
                 auto optionY = cast(double)nameLabel.y;
-                optionY += config.defaultDialogueTextFontSize * dialogueBoxInteractionLayer.length;
-                optionY += 8 * dialogueBoxInteractionLayer.length;
+                optionY += config.defaultDialogueTextFontSize * dialogueBoxInteractionLayerLength;
+                optionY += 8 * dialogueBoxInteractionLayerLength;
 
                 optionLabel.position = FloatVector(nameLabel.x, cast(float)optionY);
                 optionLabel.mouseRelease = (b, ref s)
                 {
                   nextScene = optionSceneName;
                 };
-                dialogueBoxInteractionLayer.addComponent(optionLabel, optionSceneName);
+                addComponent(LayerType.dialogueBoxInteraction, optionLabel, optionSceneName);
                 break;
               }
 

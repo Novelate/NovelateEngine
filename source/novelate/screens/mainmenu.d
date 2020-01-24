@@ -41,60 +41,7 @@ final class MainMenuScreen : Screen
   /// See: Screen.update()
   override void update(string[] data)
   {
-    auto backgroundLayer = getLayer(LayerType.background);
-
-    {
-      auto oldBackground = cast(ImageComponent)backgroundLayer.getComponent("background");
-
-      if (oldBackground)
-      {
-        backgroundLayer.addComponent(oldBackground, "background_old");
-        backgroundLayer.removeComponent("background");
-        oldBackground.fadeOut(20);
-      }
-    }
-
-    {
-      auto oldBackground = cast(AnimatedImage)backgroundLayer.getComponent("background");
-
-      if (oldBackground)
-      {
-        backgroundLayer.addComponent(oldBackground, "background_old");
-        backgroundLayer.removeComponent("background");
-        oldBackground.fadeOut(20);
-      }
-    }
-
-    auto backgroundFrames = config.menuBackground;
-
-    if (backgroundFrames && backgroundFrames.frames && backgroundFrames.frames.length)
-    {
-      string[] backgroundImages = [];
-
-      auto frameSpeed = backgroundFrames.frames[0].nextFrameTime;
-
-      foreach (frame; backgroundFrames.frames)
-      {
-        backgroundImages ~= getMediaFile(frame.image).relativePath(super.width);
-      }
-
-      if (backgroundImages && backgroundImages.length)
-      {
-        auto image = new AnimatedImage(backgroundImages);
-        image.animationSpeed = frameSpeed;
-        image.fadeIn(20);
-        image.fadedIn = ()
-        {
-          backgroundLayer.removeComponent("background_old");
-        };
-        image.fullScreen = true;
-        image.refresh(super.width, super.height);
-
-        backgroundLayer.addComponent(image, "background");
-      }
-    }
-
-    auto frontLayer = getLayer(LayerType.front);
+    updateBackground(config.menuBackground);
 
     auto logoFrames = config.menuLogoImage;
 
@@ -116,7 +63,7 @@ final class MainMenuScreen : Screen
         image.fadeIn(20);
         image.position = FloatVector(config.menuLogoImageX800, config.menuLogoImageY800);
 
-        frontLayer.addComponent(image, "logo");
+        addComponent(LayerType.front, image, "logo");
       }
     }
 
@@ -233,8 +180,8 @@ final class MainMenuScreen : Screen
 
       offsetY += label.height;
       offsetY += cast(size_t)(cast(double)label.fontSize * 0.5);
-      getLayer(LayerType.dialogueBoxInteraction)
-        .addComponent(label, to!string(label.text));
+
+      addComponent(LayerType.dialogueBoxInteraction, label, to!string(label.text));
     }
   }
 
