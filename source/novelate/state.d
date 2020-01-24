@@ -13,10 +13,8 @@
 */
 module novelate.state;
 
-import novelate.screen.layer;
-import novelate.core : Screen;
-
 import novelate.external : ExternalWindow;
+import novelate.screens : Screen;
 
 package(novelate):
 
@@ -30,12 +28,6 @@ string nextScene = null;
 bool endGame = false;
 /// boolean determining whether the game should exit or not.
 bool exitGame = false;
-/// The temp screen to change to.
-Screen changeTempScreen = Screen.none;
-/// Boolean determining whether the displayed screen is temp or not.
-bool _isTempScreen = false;
-/// Gets a boolean determining whether the displayed screen is temp or not.
-@property bool isTempScreen() { return _isTempScreen; }
 /// The current play scene.
 string playScene;
 /// Boolean determining whether the game is running.
@@ -46,11 +38,9 @@ ExternalWindow _window;
 const _fps = 60;
 /// The window title.
 string _title = "";
-/// The layers.
-Layer[] _layers;
-/// The temp layers.
-Layer[] _tempLayers;
-/// The selected layers. Usually refers to _layers or _tempLayers.
-Layer[] selectedLayers;
 /// Boolean determining whether the game is in full-screen or not.
 bool fullScreen = false;
+/// Active screens.
+Screen[string] _activeScreens;
+/// The active screen.
+Screen _activeScreen;

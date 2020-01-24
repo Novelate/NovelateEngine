@@ -10,7 +10,7 @@
 * Module Description:
 * A layer consists of multiple components that have equal importance in terms of rendering and event delegation.
 */
-module novelate.screen.layer;
+module novelate.screens.layer;
 
 import novelate.ui.component;
 
@@ -20,38 +20,22 @@ final class Layer
   private:
   /// The components.
   Component[string] _components;
-  /// The width of the layer. Usually the resolution width.
-  size_t _width;
-  /// The height of the layer. Usually the resolution height.
-  size_t _height;
-  /// The current mouse position within the window.
+  /// The current mouse position.
   FloatVector _mousePosition;
 
   public:
   final:
   package (novelate)
   {
-    /**
-    * Creates a new layer.
-    * Params:
-    *   width = The width of the layer.
-    *   height = The height of the layer.
-    */
-    this(size_t width, size_t height)
+    /// Creates a new layer.
+    this()
     {
-      _width = width;
-      _height = height;
+
     }
   }
 
   @property
   {
-    /// Gets the width of the layer. Usually the resolution width.
-    size_t width() { return _width; }
-
-    /// Gets the height of the layer. Usually the resolution height.
-    size_t height() { return _height; }
-
     /// Gets the amount of components within the layer.
     size_t length() { return _components ? _components.length : 0; }
   }
@@ -141,9 +125,6 @@ final class Layer
   */
   void refresh(size_t width, size_t height)
   {
-    _width = width;
-    _height = height;
-
     if (!_components)
     {
       return;
@@ -151,7 +132,7 @@ final class Layer
 
     foreach (k,v; _components)
     {
-      v.refresh(_width, _height);
+      v.refresh(width, height);
     }
   }
 
@@ -306,13 +287,12 @@ final class Layer
   /**
   * Handles mouse move events and delegates them to its components.
   * Params:
-  *   x = The x coordinate of the mouse cursor.
-  *   y = The y coordinate of the mouse cursor.
+  *   mousePosition = The mouse position.
   *   stopEvent = (ref) Boolean determining whether the event handling should no longer be delegated.
   */
-  void mouseMove(ptrdiff_t x, ptrdiff_t y, ref bool stopEvent)
+  void mouseMove(FloatVector mousePosition, ref bool stopEvent)
   {
-    _mousePosition = FloatVector(x, y);
+    _mousePosition = mousePosition;
 
     if (!_components)
     {

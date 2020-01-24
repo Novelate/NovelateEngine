@@ -18,7 +18,7 @@ import std.string : strip, stripLeft, stripRight, format;
 import std.algorithm : filter;
 import std.conv : to;
 
-import novelate.screen;
+import novelate.screens;
 import novelate.config;
 import novelate.state;
 import novelate.fonts;
@@ -48,46 +48,6 @@ enum LayerType : size_t
   front = 7
 }
 
-/// Clears the temp layers.
-void clearTempLayers()
-{
-  _isTempScreen = false;
-  selectedLayers = _layers;
-
-  foreach (tempLayer; _tempLayers)
-  {
-    tempLayer.clear();
-  }
-
-  fireEvent!(EventType.onTempScreenClear);
-}
-
-/// Sets the temp layers.
-void setTempLayers()
-{
-  _isTempScreen = true;
-  selectedLayers = _tempLayers;
-
-  fireEvent!(EventType.onTempScreenShow);
-}
-
-/**
-* Gets a layer by its index. It retrieves it from the current selected layers whether it's the main layers or the temp layers.
-* Params:
-*   index = The index of the layer to get.
-* Returns:
-*   The layer within the current selected layers.
-*/
-Layer getLayer(size_t index)
-{
-  if (!selectedLayers || index >= selectedLayers.length)
-  {
-    return null;
-  }
-
-  return selectedLayers[index];
-}
-
 /**
 * Changes the resolution of the game. This should preferebly only be of the following resolutions: 800x600, 1024x768 or 1280x720. However any resolutions are acceptable but may have side-effects attached such as invalid rendering etc. All set resolutions are saved to a res.ini file in the data folder allowing for resolutions to be kept across instances of the game.
 * Params:
@@ -113,11 +73,11 @@ void changeResolution(size_t width, size_t height, bool fullScreen)
 
   _window.fps = _fps;
 
-  if (_layers)
+  if (_activeScreens)
   {
-    foreach (layer; _layers)
+    foreach (k,v; _activeScreens)
     {
-      layer.refresh(_width, _height);
+      v.refresh(_width, _height);
     }
   }
 
@@ -132,24 +92,8 @@ void loadCreditsVideo()
   // ...
 }
 
-/// Clears all layers for their components except for the background layer as that should usually be cleared by fading-in and fading-out when adding a new background. This adds smoothness to the game.
-void clearAllLayersButBackground()
-{
-  if (!selectedLayers || !selectedLayers.length)
-  {
-    return;
-  }
-
-  foreach (i; 1 .. selectedLayers.length)
-  {
-    selectedLayers[i].clear();
-  }
-
-  fireEvent!(EventType.onClearingAllLayersButBackground);
-}
-
-/// Enumeration of screens.
-enum Screen : string
+/// Enumeration of standard screens.
+enum StandardScreen : string
 {
   /// No screen.
   none = "none",
@@ -168,23 +112,65 @@ enum Screen : string
 }
 
 /**
-* Changes the screen.
+* Adds a screen to the game.
 * Params:
-*   screen = The screen to change to. You should use the "Screen" enum for accuracy of the screen name.
+*   screenName = The screen name.
+*   screen = The screen to add.
+*/
+void addScreen(string screenName, Screen screen)
+{
+  if (!screen)
+  {
+    return;
+  }
+
+  screen.setWidthAndHeight(_width, _height);
+
+  _activeScreens[screenName] = screen;
+}
+
+/**
+* Removes a screen from the game.
+* Params:
+*   screenName = The name of the screen.
+*/
+void removeScreen(string screenName)
+{
+  if (!_activeScreens)
+  {
+    return;
+  }
+
+  _activeScreens.remove(screenName);
+}
+
+/**
+* Changes the active screen.
+* Params:
+*   screenName = The screen to change to. You should use the "Screen" enum for accuracy of the screen name.
 *   data = The data passed onto the screen.
 */
-void changeScreen(string screen, string[] data = null)
+void changeActiveScreen(string screenName, string[] data = null)
 {
-  clearAllLayersButBackground();
-
-  switch (screen)
+  if (!_activeScreens)
   {
-    case Screen.mainMenu: showMainMenu(); break;
-
-    case Screen.scene: if (data && data.length) changeScene(data[0]); break;
-
-    default: break; // TODO: Custom screen handling through events.
+    return;
   }
+
+  auto screen = _activeScreens.get(screenName, null);
+
+  if (!screen)
+  {
+    return;
+  }
+
+  if (screen.shouldClearLayers(data))
+  {
+    screen.clearAllLayersButBackground();
+  }
+
+  screen.update(data);
+  _activeScreen = screen;
 
   fireEvent!(EventType.onScreenChange);
 }
@@ -234,13 +220,8 @@ void initialize()
     }
   }
 
-  foreach (_; 0 .. 10)
-  {
-    _layers ~= new Layer(_width, _height);
-    _tempLayers ~= new Layer(_width, _height);
-  }
-
-  selectedLayers = _layers;
+  addScreen(StandardScreen.mainMenu, new MainMenuScreen);
+  addScreen(StandardScreen.scene, new PlayScreen);
 
   playScene = config.startScene;
 }
@@ -252,7 +233,7 @@ void run()
 
     changeResolution(_width, _height, fullScreen);
 
-    changeScreen(Screen.mainMenu);
+    changeActiveScreen(StandardScreen.mainMenu);
 
     auto manager = new ExternalEventManager;
     manager.addHandler(ExternalEventType.closed, {
@@ -260,84 +241,34 @@ void run()
     });
 
     manager.addHandler(ExternalEventType.mouseMoved, {
-      if (selectedLayers && selectedLayers.length)
+      if (_activeScreen)
       {
-        foreach_reverse (layer; selectedLayers)
-        {
-          bool stopEvent = false;
-
-          layer.mouseMove(ExternalEventState.mouseMoveEvent.x, ExternalEventState.mouseMoveEvent.y, stopEvent);
-
-          if (stopEvent)
-          {
-            break;
-          }
-        }
+        _activeScreen.mouseMove(ExternalEventState.mouseMoveEvent.x, ExternalEventState.mouseMoveEvent.y);
       }
     });
     manager.addHandler(ExternalEventType.mouseButtonPressed, {
-      if (selectedLayers && selectedLayers.length)
+      if (_activeScreen)
       {
-        foreach_reverse (layer; selectedLayers)
-        {
-          bool stopEvent = false;
-
-          layer.mousePress(ExternalEventState.mouseButtonEvent.button, stopEvent);
-
-          if (stopEvent)
-          {
-            break;
-          }
-        }
+        _activeScreen.mousePress(ExternalEventState.mouseButtonEvent.button);
       }
     });
     manager.addHandler(ExternalEventType.mouseButtonReleased, {
-      if (selectedLayers && selectedLayers.length)
+      if (_activeScreen)
       {
-        foreach_reverse (layer; selectedLayers)
-        {
-          bool stopEvent = false;
-
-          layer.mouseRelease(ExternalEventState.mouseButtonEvent.button, stopEvent);
-
-          if (stopEvent)
-          {
-            break;
-          }
-        }
+        _activeScreen.mouseRelease(ExternalEventState.mouseButtonEvent.button);
       }
     });
 
     manager.addHandler(ExternalEventType.keyPressed, {
-      if (selectedLayers && selectedLayers.length)
+      if (_activeScreen)
       {
-        foreach_reverse (layer; selectedLayers)
-        {
-          bool stopEvent = false;
-
-          layer.keyPress(ExternalEventState.keyEvent.code, stopEvent);
-
-          if (stopEvent)
-          {
-            break;
-          }
-        }
+        _activeScreen.keyPress(ExternalEventState.keyEvent.code);
       }
     });
     manager.addHandler(ExternalEventType.keyReleased, {
-      if (selectedLayers && selectedLayers.length)
+      if (_activeScreen)
       {
-        foreach_reverse (layer; selectedLayers)
-        {
-          bool stopEvent = false;
-
-          layer.keyRelease(ExternalEventState.keyEvent.code, stopEvent);
-
-          if (stopEvent)
-          {
-            break;
-          }
-        }
+        _activeScreen.keyRelease(ExternalEventState.keyEvent.code);
       }
     });
 
@@ -360,23 +291,21 @@ void run()
         }
         else
         {
-          changeScreen(Screen.mainMenu);
+          changeActiveScreen(StandardScreen.mainMenu);
         }
 
         endGame = false;
         playScene = config.startScene;
       }
 
-      if (changeTempScreen != Screen.none)
-      {
-        changeScreen(changeTempScreen);
-
-        changeTempScreen = Screen.none;
-      }
-
       if (nextScene)
       {
-        changeScene(nextScene);
+        auto sceneScreen = _activeScreens[StandardScreen.scene];
+
+        if (sceneScreen)
+        {
+          sceneScreen.update([nextScene]);
+        }
 
         nextScene = null;
       }
@@ -388,20 +317,9 @@ void run()
 
       _window.clear(backgroundColor);
 
-      if (_layers && _layers.length)
+      if (_activeScreen)
       {
-        foreach (layer; _layers)
-        {
-          layer.render(_window);
-        }
-      }
-
-      if (_tempLayers && _tempLayers.length)
-      {
-        foreach (layer; _tempLayers)
-        {
-          layer.render(_window);
-        }
+        _activeScreen.render(_window);
       }
 
       fireEvent!(EventType.onRender);

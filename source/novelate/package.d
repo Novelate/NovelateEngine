@@ -32,7 +32,7 @@ public
   import novelate.queue;
 
   import novelate.scene;
-  import novelate.screen;
+  import novelate.screens;
   import novelate.state;
   import novelate.submain;
 
