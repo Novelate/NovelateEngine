@@ -3,10 +3,25 @@
   "targetType": "executable",
   "sourcePaths": ["source"],
   "stringImportPaths": ["story", "config"],
-  "lflags" : ["+libs\\"],
-  "versions": ["NOVELATE_CUSTOM_MAIN", "NOVELATE_SFML"],
+  "versions": ["NOVELATE_CUSTOM_MAIN"],
   "dependencies": {
-    "novelate": "0.0.4",
-    "dsfml": "2.1.1"
-  }
+    "novelate": "0.0.5"
+  },
+  "configurations": [{
+    "name": "win_dsfml_x64",
+    "versions": ["NOVELATE_SFML"],
+    "lflags" : ["/LIBPATH:libs_win_dsfml_x64"],
+    "copyFiles": ["dll_win_dsfml_x64/*"],
+    "dependencies": {
+      "dsfml": "2.1.1"
+    }
+  }, {
+    "name": "win_dsfml_x86",
+    "versions": ["NOVELATE_SFML"],
+    "lflags": ["+libs_win_dsfml_x86\\"],
+    "copyFiles": ["dll_win_dsfml_x86/*"],
+    "dependencies": {
+      "dsfml": "2.1.1"
+    }
+  }]
 }
