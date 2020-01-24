@@ -364,6 +364,12 @@ final class PlayScreen : Screen
                 break;
               }
 
+              case "Screen":
+              {
+                changeActiveScreen(action.value);
+                break;
+              }
+
               default: break;
           }
           break;
