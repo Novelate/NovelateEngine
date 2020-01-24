@@ -16,6 +16,12 @@ import novelate.state;
 import novelate.screens.layer;
 import novelate.external;
 import novelate.events;
+import novelate.ui.component;
+import novelate.ui.imagecomponent;
+import novelate.ui.animatedimage;
+import novelate.media;
+import novelate.core : LayerType;
+import novelate.config : NovelateImageAnimation;
 
 /// A screen.
 abstract class Screen
@@ -38,6 +44,106 @@ abstract class Screen
     {
       _layers ~= new Layer;
     }
+  }
+
+  /// Clears the old background.
+  private void clearOldBackground()
+  {
+    {
+      auto oldBackground = cast(ImageComponent)getComponent(LayerType.background, "background");
+
+      if (oldBackground)
+      {
+        addComponent(LayerType.background, oldBackground, "background_old");
+        removeComponent(LayerType.background, "background");
+        oldBackground.fadeOut(20);
+      }
+    }
+
+    {
+      auto oldBackground = cast(AnimatedImage)getComponent(LayerType.background, "background");
+
+      if (oldBackground)
+      {
+        addComponent(LayerType.background, oldBackground, "background_old");
+        removeComponent(LayerType.background, "background");
+        oldBackground.fadeOut(20);
+      }
+    }
+  }
+
+  /**
+  * Updates the background with a media file.
+  * Params:
+  *   mediaFile = The name of the media file.
+  */
+  void updateBackground(string mediaFile)
+  {
+    clearOldBackground();
+
+    if (!mediaFile || !mediaFile.length)
+    {
+      return;
+    }
+
+    auto backgroundImage = getMediaFile(mediaFile);
+
+    if (!backgroundImage)
+    {
+      return;
+    }
+
+    auto image = new ImageComponent(backgroundImage.relativePath(_width));
+    image.fadeIn(20);
+    image.fadedIn = ()
+    {
+      removeComponent(LayerType.background, "background_old");
+    };
+    image.fullScreen = true;
+    image.refresh(_width, _height);
+
+    addComponent(LayerType.background, image, "background");
+  }
+
+  /**
+  * Updates the background with an animation.
+  * Params:
+  *   backgroundAnimation = The background animation to update with.
+  */
+  void updateBackground(NovelateImageAnimation backgroundAnimation)
+  {
+    clearOldBackground();
+
+    if (!backgroundAnimation || !backgroundAnimation.frames || !backgroundAnimation.frames.length)
+    {
+      return;
+    }
+
+    string[] backgroundImages = [];
+
+    auto frameSpeed = backgroundAnimation.frames[0].nextFrameTime;
+
+    foreach (frame; backgroundAnimation.frames)
+    {
+      backgroundImages ~= getMediaFile(frame.image).relativePath(_width);
+    }
+
+    if (!backgroundImages || !backgroundImages.length)
+    {
+      return;
+    }
+
+    auto image = new AnimatedImage(backgroundImages);
+    image.animationSpeed = frameSpeed;
+    image.fadeIn(20);
+    image.fadedIn = ()
+    {
+      removeComponent(LayerType.background, "background_old");
+    };
+    image.fullScreen = true;
+    image.refresh(_width, _height);
+
+    addComponent(LayerType.background, image, "background");
   }
 
   package(novelate)
@@ -96,6 +202,54 @@ abstract class Screen
     }
 
     /**
+    * Adds a component to a layer.
+    * Params:
+    *   component = The component to add.
+    *   name = The name of the component. This must be unique for the layer, otherwise an existing component will be replaced.
+    */
+    void addComponent(size_t index, Component component, string name)
+    {
+      if (!_layers || index >= _layers.length)
+      {
+        return;
+      }
+
+      _layers[index].addComponent(component, name);
+    }
+
+    /**
+    * Removes a component from a layer.
+    * Params:
+    *   name = The name of the component to remove.
+    */
+    void removeComponent(size_t index, string name)
+    {
+      if (!_layers || index >= _layers.length)
+      {
+        return;
+      }
+
+      _layers[index].removeComponent(name);
+    }
+
+    /**
+    * Gets a component from a layer. You msut cast to the original component type for it to be useful.
+    * Params:
+    *   name = The name of the component to get.
+    * Returns:
+    *   The component if found, null otherwise.
+    */
+    Component getComponent(size_t index, string name)
+    {
+      if (!_layers || index >= _layers.length)
+      {
+        return null;
+      }
+
+      return _layers[index].getComponent(name);
+    }
+
+    /**
     * Gets a layer of the screen.
     * Params:
     *   index = The index of the layer.
@@ -110,6 +264,21 @@ abstract class Screen
       }
 
       return _layers[index];
+    }
+
+    /**
+    * Clears a layer of its components.
+    * Params:
+    *   index = The index of the layer.
+    */
+    void clear(size_t index)
+    {
+      if (!_layers || index >= _layers.length)
+      {
+        return;
+      }
+
+      _layers[index].clear();
     }
 
     /**
