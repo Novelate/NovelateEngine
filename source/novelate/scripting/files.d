@@ -10,7 +10,7 @@
 * Module Description:
 * Compile-time file management for reading files during compilation.
 */
-module novelate.files;
+module novelate.scripting.files;
 
 /// Mixin template for loading the story at compile-time.
 mixin template LoadStory()

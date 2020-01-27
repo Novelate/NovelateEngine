@@ -16,7 +16,7 @@ import std.array : split;
 import std.conv : to;
 
 import novelate.config;
-import novelate.scene;
+import novelate.scripting.scene;
 import novelate.media;
 import novelate.music;
 import novelate.ui.imagecomponent;
