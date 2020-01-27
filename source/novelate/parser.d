@@ -52,8 +52,6 @@ private
 */
 void parse(string content)
 {
-  import std.stdio : writeln, writefln;
-
   import std.array : array, replace, split;
   import std.string : strip, stripLeft, stripRight, format;
   import std.algorithm : map, filter, startsWith, endsWith, countUntil;

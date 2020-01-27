@@ -17,6 +17,7 @@ import std.conv : to;
 
 import novelate.fonts;
 import novelate.external : ExternalText;
+import novelate.buildstate;
 
 /**
 * Creates text that wraps when it exceeds a given width. It does so by adding a new line at the last space given before the text exceeds the width and does so for all of the text.
@@ -72,6 +73,11 @@ dstring wrapableText(dstring text, string fontName, size_t fontSize, size_t widt
     textInstance.setCharacterSize(fontSize);
 
     auto textWidth = textInstance.bounds.x;
+
+    static if (isManualMemory)
+    {
+      textInstance.clean();
+    }
 
     if (textWidth >= width)
     {

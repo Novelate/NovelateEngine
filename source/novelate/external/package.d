@@ -14,7 +14,9 @@ module novelate.external;
 
 public import novelate.external.core;
 
-version (NOVELATE_SFML)
+import novelate.buildstate;
+
+static if (useSFML && !useDerelict)
 {
   // Bindings should never expose their external types.
   // fromNative() and toNative() are exposed for usage when implemented Novelate into an existing engine or game.
@@ -23,5 +25,20 @@ version (NOVELATE_SFML)
     ExternalWindow, ExternalImage,
     ExternalText, ExternalRectangleShape,
     ExternalFont, ExternalMusic,
-    toNative, fromNative;
+    toNative, fromNative,
+    initExternalBinding,
+    quit;
+}
+else static if (useSDL && useDerelict)
+{
+  // Bindings should never expose their external types.
+  // fromNative() and toNative() are exposed for usage when implemented Novelate into an existing engine or game.
+
+  public import novelate.sdlbinding :
+    ExternalWindow, ExternalImage,
+    ExternalText, ExternalRectangleShape,
+    ExternalFont, ExternalMusic,
+    toNative, fromNative,
+    initExternalBinding,
+    quit;
 }

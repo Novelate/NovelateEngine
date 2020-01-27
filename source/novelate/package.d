@@ -14,6 +14,8 @@ module novelate;
 
 public
 {
+  import novelate.buildstate;
+
   import novelate.character;
   import novelate.config;
   import novelate.core;

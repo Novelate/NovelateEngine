@@ -14,6 +14,8 @@ module novelate.ui.component;
 
 public import novelate.external;
 
+import novelate.buildstate;
+
 /// A component.
 abstract class Component
 {
@@ -146,4 +148,10 @@ abstract class Component
   void updateSize();
   /// Called when the position of the component updates.
   void updatePosition();
+
+  static if (isManualMemory)
+  {
+    /// Cleans the component for its native objects.
+    void clean();
+  }
 }

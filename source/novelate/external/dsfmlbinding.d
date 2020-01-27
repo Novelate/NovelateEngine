@@ -13,7 +13,9 @@
 */
 module novelate.dsfmlbinding;
 
-version (NOVELATE_SFML)
+import novelate.buildstate;
+
+static if (useSFML && !useDerelict)
 {
   import novelate.external.core;
 
@@ -24,6 +26,12 @@ version (NOVELATE_SFML)
     import dsfml.audio;
     import dsfml.system;
     import dsfml.network;
+  }
+
+  /// Initialization of the external binding.
+  void initExternalBinding()
+  {
+
   }
 
   /// FloatVector -> Vector2f
@@ -217,6 +225,11 @@ version (NOVELATE_SFML)
         _fps = newFps;
 
         _window.setFramerateLimit(_fps);
+      }
+
+      bool canUpdate()
+      {
+        return true;
       }
     }
 
@@ -518,5 +531,11 @@ version (NOVELATE_SFML)
     {
       _music.stop();
     }
+  }
+
+  /// quit()
+  void quit()
+  {
+
   }
 }

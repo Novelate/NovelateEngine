@@ -17,6 +17,7 @@ import std.datetime;
 import novelate.ui.component;
 import novelate.fonts;
 import novelate.config;
+import novelate.buildstate;
 
 /// Wrapper around a label component.
 final class Label : Component
@@ -141,5 +142,17 @@ final class Label : Component
   override void updatePosition()
   {
     _textComponent.position = super.position;
+  }
+
+  static if (isManualMemory)
+  {
+    /// See: Component.clean()
+    override void clean()
+    {
+      if (_textComponent)
+      {
+        _textComponent.clean();
+      }
+    }
   }
 }

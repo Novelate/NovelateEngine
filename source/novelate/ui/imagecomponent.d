@@ -15,6 +15,7 @@ module novelate.ui.imagecomponent;
 import std.conv : to;
 
 import novelate.ui.component;
+import novelate.buildstate;
 
 /// Wrapepr around an image component.
 final class ImageComponent : Component
@@ -227,5 +228,17 @@ final class ImageComponent : Component
   override void updatePosition()
   {
     _image.position = super.position;
+  }
+
+  static if (isManualMemory)
+  {
+    /// See: Component.clean()
+    override void clean()
+    {
+      if (_image)
+      {
+        _image.clean();
+      }
+    }
   }
 }

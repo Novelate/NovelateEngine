@@ -53,7 +53,7 @@ final class PlayScreen : Screen
   /// Creates a new play screen.
   this()
   {
-    super();
+    super(StandardScreen.scene);
   }
 
   /// See: Screen.shouldClearLayers()
