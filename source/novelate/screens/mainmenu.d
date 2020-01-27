@@ -35,7 +35,7 @@ final class MainMenuScreen : Screen
   /// Creates a new main menu screen.
   this()
   {
-    super();
+    super(StandardScreen.mainMenu);
   }
 
   /// See: Screen.update()
@@ -108,10 +108,13 @@ final class MainMenuScreen : Screen
 
     Label[] labels = [];
 
-    labels ~= createLabel(config.menuItem_Play.text, (b, ref s)
+    Label thisLabel;
+    thisLabel = createLabel(config.menuItem_Play.text, (b, ref s)
     {
       changeActiveScreen(StandardScreen.scene, [playScene]);
     }, offsetX);
+
+    labels ~= thisLabel;
 
     labels ~= createLabel(config.menuItem_Load.text, (b, ref s)
     {

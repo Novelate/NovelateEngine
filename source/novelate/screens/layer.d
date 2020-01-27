@@ -13,11 +13,14 @@
 module novelate.screens.layer;
 
 import novelate.ui.component;
+import novelate.buildstate;
 
 /// A layer of components.
 final class Layer
 {
   private:
+  /// The screen name.
+  string _screenName;
   /// The components.
   Component[string] _components;
   /// The current mouse position.
@@ -27,10 +30,14 @@ final class Layer
   final:
   package (novelate)
   {
-    /// Creates a new layer.
-    this()
+    /**
+    * Creates a new layer.
+    * Params:
+    *   screenName = The name of the screen.
+    */
+    this(string screenName)
     {
-
+      _screenName = screenName;
     }
   }
 
@@ -38,7 +45,23 @@ final class Layer
   {
     /// Gets the amount of components within the layer.
     size_t length() { return _components ? _components.length : 0; }
+
+    /// Gets the screen name.
+    string screenName() { return _screenName; }
   }
+
+  static if (isManualMemory)
+  {
+    /// Cleans the layer and all its components.
+    void clean()
+    {
+      foreach (component; _components)
+      {
+        component.clean();
+      }
+    }
+  }
+
 
   /// Clears the layer for its components.
   void clear()
@@ -46,6 +69,11 @@ final class Layer
     if (!_components)
     {
       return;
+    }
+
+    static if (isManualMemory)
+    {
+      clean();
     }
 
     _components.clear();
@@ -56,9 +84,18 @@ final class Layer
   * Params:
   *   component = The component to add.
   *   name = The name of the component. This must be unique for the layer, otherwise an existing component will be replaced.
+  *   cleanOldComponent = Boolean determining whether the old component's memory should be cleaned or not. Only used if "NOVELATE_MANUALMEMORY" is enabled.
   */
-  void addComponent(Component component, string name)
+  void addComponent(Component component, string name, bool cleanOldComponent = true)
   {
+    static if (isManualMemory)
+    {
+      if (cleanOldComponent && _components && name in _components)
+      {
+        _components[name].clean();
+      }
+    }
+
     _components[name] = component;
   }
 
@@ -66,12 +103,21 @@ final class Layer
   * Removes a component from the layer.
   * Params:
   *   name = The name of the component to remove.
+  *   cleanOldComponent = Boolean determining whether the component's memory should be cleaned or not. Only used if "NOVELATE_MANUALMEMORY" is enabled.
   */
-  void removeComponent(string name)
+  void removeComponent(string name, bool cleanOldComponent = true)
   {
     if (!_components)
     {
       return;
+    }
+
+    static if (isManualMemory)
+    {
+      if (cleanOldComponent && _components && name in _components)
+      {
+        _components[name].clean();
+      }
     }
 
     _components.remove(name);
@@ -151,6 +197,13 @@ final class Layer
 
     foreach (k,v; _components)
     {
+      import novelate.state : _activeScreenName;
+
+      if (_screenName != _activeScreenName)
+      {
+        break;
+      }
+
       if (v.globalKeyPress)
       {
         v.globalKeyPress(key, stopEvent);
@@ -188,6 +241,13 @@ final class Layer
 
     foreach (k,v; _components)
     {
+      import novelate.state : _activeScreenName;
+
+      if (_screenName != _activeScreenName)
+      {
+        break;
+      }
+
       if (v.globalKeyRelease)
       {
         v.globalKeyRelease(key, stopEvent);
@@ -225,6 +285,13 @@ final class Layer
 
     foreach (k,v; _components)
     {
+      import novelate.state : _activeScreenName;
+
+      if (_screenName != _activeScreenName)
+      {
+        break;
+      }
+
       if (v.globalMousePress)
       {
         v.globalMousePress(button, stopEvent);
@@ -235,7 +302,10 @@ final class Layer
         }
       }
 
-      if (v.mousePress && v.intersect(_mousePosition))
+      auto mousePosX = ExternalEventState.mouseMoveEvent.x;
+      auto mousePosY = ExternalEventState.mouseMoveEvent.y;
+
+      if (v.mousePress && v.intersect(FloatVector(mousePosX, mousePosY)))
       {
         v.mousePress(button, stopEvent);
 
@@ -255,6 +325,8 @@ final class Layer
   */
   void mouseRelease(MouseButton button, ref bool stopEvent)
   {
+    import novelate.state;
+
     if (!_components)
     {
       return;
@@ -262,6 +334,13 @@ final class Layer
 
     foreach (k,v; _components)
     {
+      import novelate.state : _activeScreenName;
+
+      if (_screenName != _activeScreenName)
+      {
+        break;
+      }
+
       if (v.globalMouseRelease)
       {
         v.globalMouseRelease(button, stopEvent);
@@ -272,7 +351,10 @@ final class Layer
         }
       }
 
-      if (v.mouseRelease && v.intersect(_mousePosition))
+      auto mousePosX = ExternalEventState.mouseMoveEvent.x;
+      auto mousePosY = ExternalEventState.mouseMoveEvent.y;
+
+      if (v.mouseRelease && v.intersect(FloatVector(mousePosX, mousePosY)))
       {
         v.mouseRelease(button, stopEvent);
 
@@ -301,6 +383,13 @@ final class Layer
 
     foreach (k,v; _components)
     {
+      import novelate.state : _activeScreenName;
+
+      if (_screenName != _activeScreenName)
+      {
+        break;
+      }
+
       if (v.globalMouseMove)
       {
         v.globalMouseMove(_mousePosition, stopEvent);

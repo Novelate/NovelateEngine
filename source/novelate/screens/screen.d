@@ -22,6 +22,7 @@ import novelate.ui.animatedimage;
 import novelate.media;
 import novelate.core : LayerType;
 import novelate.config : NovelateImageAnimation;
+import novelate.buildstate;
 
 /// A screen.
 abstract class Screen
@@ -35,14 +36,22 @@ abstract class Screen
   size_t _height;
   /// The current mouse position within the window.
   FloatVector _mousePosition;
+  /// The screen name.
+  string _screenName;
 
   protected:
-  /// Creates a new screen.
-  this()
+  /**
+  * Creates a new screen.
+  * Params:
+  *   screenName = The name of the screen.
+  */
+  this(string screenName)
   {
+    _screenName = screenName;
+
     foreach (_; 0 .. 10)
     {
-      _layers ~= new Layer;
+      _layers ~= new Layer(screenName);
     }
   }
 
@@ -55,8 +64,16 @@ abstract class Screen
       if (oldBackground)
       {
         addComponent(LayerType.background, oldBackground, "background_old");
-        removeComponent(LayerType.background, "background");
+        removeComponent(LayerType.background, "background", false);
         oldBackground.fadeOut(20);
+
+        static if (isManualMemory)
+        {
+          oldBackground.fadedOut = ()
+          {
+            oldBackground.clean();
+          };
+        }
       }
     }
 
@@ -66,8 +83,16 @@ abstract class Screen
       if (oldBackground)
       {
         addComponent(LayerType.background, oldBackground, "background_old");
-        removeComponent(LayerType.background, "background");
+        removeComponent(LayerType.background, "background", false);
         oldBackground.fadeOut(20);
+
+        static if (isManualMemory)
+        {
+          oldBackground.fadedOut = ()
+          {
+            oldBackground.clean();
+          };
+        }
       }
     }
   }
@@ -148,6 +173,18 @@ abstract class Screen
 
   package(novelate)
   {
+    static if (isManualMemory)
+    {
+      /// Cleans the screen for its native objects.
+      void clean()
+      {
+        foreach (layer; _layers)
+        {
+          layer.clean();
+        }
+      }
+    }
+
     /**
     * Sets the width and height of the screen.
     * Params:
@@ -199,37 +236,44 @@ abstract class Screen
 
       /// Gets the height of the screen. Usually the resolution height.
       size_t height() { return _height; }
+
+      /// Gets the screen name.
+      string name() { return _screenName; }
     }
 
     /**
     * Adds a component to a layer.
     * Params:
+    *   index = The index of the layer to add the component to.
     *   component = The component to add.
     *   name = The name of the component. This must be unique for the layer, otherwise an existing component will be replaced.
+    *   cleanOldComponent = Boolean determining whether the old component's memory should be cleaned or not. Only used if "NOVELATE_MANUALMEMORY" is enabled.
     */
-    void addComponent(size_t index, Component component, string name)
+    void addComponent(size_t index, Component component, string name, bool cleanOldComponent = true)
     {
       if (!_layers || index >= _layers.length)
       {
         return;
       }
 
-      _layers[index].addComponent(component, name);
+      _layers[index].addComponent(component, name, cleanOldComponent);
     }
 
     /**
     * Removes a component from a layer.
     * Params:
+    *   index = The index of the layer to remove the component from.
     *   name = The name of the component to remove.
+    *   cleanOldComponent = Boolean determining whether the component's memory should be cleaned or not. Only used if "NOVELATE_MANUALMEMORY" is enabled.
     */
-    void removeComponent(size_t index, string name)
+    void removeComponent(size_t index, string name, bool cleanOldComponent = true)
     {
       if (!_layers || index >= _layers.length)
       {
         return;
       }
 
-      _layers[index].removeComponent(name);
+      _layers[index].removeComponent(name, cleanOldComponent);
     }
 
     /**
@@ -340,6 +384,11 @@ abstract class Screen
 
       foreach_reverse (layer; _layers)
       {
+        if (_screenName != _activeScreenName)
+        {
+          break;
+        }
+
         bool stopEvent;
         layer.keyPress(key, stopEvent);
 
@@ -364,6 +413,11 @@ abstract class Screen
 
       foreach_reverse (layer; _layers)
       {
+        if (_screenName != _activeScreenName)
+        {
+          break;
+        }
+
         bool stopEvent;
         layer.keyRelease(key, stopEvent);
 
@@ -388,6 +442,11 @@ abstract class Screen
 
       foreach_reverse (layer; _layers)
       {
+        if (_screenName != _activeScreenName)
+        {
+          break;
+        }
+
         bool stopEvent;
         layer.mousePress(button, stopEvent);
 
@@ -405,6 +464,8 @@ abstract class Screen
     */
     void mouseRelease(MouseButton button)
     {
+      import novelate.state;
+
       if (!_layers)
       {
         return;
@@ -412,6 +473,11 @@ abstract class Screen
 
       foreach_reverse (layer; _layers)
       {
+        if (_screenName != _activeScreenName)
+        {
+          break;
+        }
+
         bool stopEvent;
         layer.mouseRelease(button, stopEvent);
 
@@ -439,6 +505,11 @@ abstract class Screen
 
       foreach_reverse (layer; _layers)
       {
+        if (_screenName != _activeScreenName)
+        {
+          break;
+        }
+
         bool stopEvent;
         layer.mouseMove(_mousePosition, stopEvent);
 

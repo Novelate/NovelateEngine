@@ -13,6 +13,7 @@
 module novelate.ui.dialoguebox;
 
 import novelate.ui.component;
+import novelate.buildstate;
 
 /// A dialogue box component.
 final class DialogueBox : Component
@@ -84,6 +85,14 @@ final class DialogueBox : Component
   /// See: Component.updateSize()
   override void updateSize()
   {
+    static if (isManualMemory)
+    {
+      if (_rect)
+      {
+        _rect.clean();
+      }
+    }
+
     _rect = new ExternalRectangleShape(FloatVector(cast(float)super.width, cast(float)super.height));
     _rect.fillColor = _color;
 
@@ -94,5 +103,17 @@ final class DialogueBox : Component
   override void updatePosition()
   {
     _rect.position = FloatVector(cast(float)super.x, cast(float)super.y);
+  }
+
+  static if (isManualMemory)
+  {
+    /// See: Component.clean()
+    override void clean()
+    {
+      if (_rect)
+      {
+        _rect.clean();
+      }
+    }
   }
 }

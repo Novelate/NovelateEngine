@@ -44,3 +44,4 @@ bool fullScreen = false;
 Screen[string] _activeScreens;
 /// The active screen.
 Screen _activeScreen;
+string _activeScreenName;

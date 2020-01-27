@@ -17,6 +17,7 @@ import novelate.ui.textwrap;
 import novelate.fonts;
 import novelate.config;
 import novelate.queue;
+import novelate.buildstate;
 
 /// Alias for delegate handler.
 private alias _DELEGATE = void delegate(MouseButton button, ref bool stopEvent);
@@ -144,7 +145,9 @@ final class TimedText : Component
     void text(dstring newText)
     {
       _originalText = newText;
+
       _text = wrapableText(_originalText, _fontName, _fontSize, _boxWidth);
+
       _textCount = 1;
       _hasFinished = false;
     }
@@ -292,5 +295,17 @@ final class TimedText : Component
   override void updatePosition()
   {
     _textComponent.position = super.position;
+  }
+
+  static if (isManualMemory)
+  {
+    /// See: Component.clean()
+    override void clean()
+    {
+      if (_textComponent)
+      {
+        _textComponent.clean();
+      }
+    }
   }
 }

@@ -4,19 +4,21 @@
 
 Website: [https://novelate.com/](https://novelate.com/) (Coming Soon)
 
-Novelate is a free open-source cross-platform visual novel framework and engine, written in the D programming language and can be used freely for personal and commercial projects.
+Novelate is a free open-source cross-platform visual novel framework and engine, written in the D programming language using SFML and/or SDL, and can be used freely for personal and commercial projects.
 
 There are currently only Windows (x86 / x64) build examples but it's possible to compile to other platforms such as Linux, macOS etc.
 
-It currently has an official binding to SFML (DSFML) but Novelate was made in a way that interacing with other libraries such as SDL etc. is possible and will officially be supported in the future.
+It currently has an official binding to SFML (DSFML) and SDL (Derelict) but Novelate was made in a way that interacing with other libraries such as SFML (Derelict) etc. is possible and will officially be supported in the future.
 
 This will help Novelate being able to be implemented in existing engines and games.
 
 *The project began all the way back in 2013 but was quickly abandonded afterwards due to personal reasons back then. It was under a different name and was never published.*
 
-*Novelate is basically a complete remake of the engine back then. Instead of officially using SDL then it officially uses SFML, however SDL support is coming.*
+*Novelate is basically a complete remake of the engine back then. Instead of officially using SDL then it officially can use both SFML and SDL.*
 
-The bindings to SFML are through DSFML using version 2.1.1 (Apr. 19th 2016) in case the original project stagnates entirely or goes through breaking changes. That is also the latest release for the binding other than the master itself which is not stable.
+The bindings to SFML are through DSFML using version 2.1.1 (Apr. 19th 2016) without upgrade possibility in case the original project stagnates entirely or goes through breaking changes. That is also the latest release for the binding other than the master itself which is not stable.
+
+The bindings to SDL are through Derelict using version ~>3.0.0-beta (2019-Mar-28) but with upgrade possibility since the project is more active.
 
 ***The engine itself is not currently stable and still in early development, however it has some of the basic functionality done. This also means not all configurations etc. are supported yet.***
 
@@ -410,6 +412,64 @@ dub build --config=win_dsfml_x86
 
 ```
 dub build -a=x86_64 --config=win_dsfml_x64
+```
+
+### Windows (SDL - Derelict)
+
+The following **dub.json** will allow both x86 and x64 builds on Windows using SDL.
+
+```
+{
+  "name": "OUTPUT_NAME",
+  "targetType": "executable",
+  "sourcePaths": ["source"],
+  "stringImportPaths": ["story", "config"],
+  "versions": ["NOVELATE_CUSTOM_MAIN"],
+  "dependencies": {
+    "novelate": "0.0.5"
+  },
+  "configurations": [{
+    "name": "win_sdl_x64",
+    "versions": ["NOVELATE_SDL", "NOVELATE_DERELICT", "NOVELATE_MANUALMEMORY"],
+    "copyFiles": ["dll_win_sdl_x64/*"],
+    "dependencies": {
+      "derelict-util": "~>3.0.0-beta.1",
+      "derelict-sdl2": "~>3.0.0-beta"
+    }
+  }, {
+    "name": "win_sdl_x86",
+    "versions": ["NOVELATE_SDL", "NOVELATE_DERELICT", "NOVELATE_MANUALMEMORY"],
+    "copyFiles": ["dll_win_sdl_x86/*"],
+    "dependencies": {
+      "derelict-util": "~>3.0.0-beta.1",
+      "derelict-sdl2": "~>3.0.0-beta"
+    }
+  }]
+}
+```
+
+The dll files for SDL, must be present in a folder named either  **dll_win_sdl_x64** or **dll_win_sdl_x86** depending on the architecture.
+
+The dll folders must be located in the root folder of the project.
+
+You need at least the following **packages** and versions for SDL.
+
+* SDL2_image-2.0.5
+* SDL2_mixer-2.0.4
+* SDL2_net-2.0.1
+* SDL2_ttf-2.0.15
+* SDL2-2.0.10
+
+#### Compiling x86
+
+```
+dub build --config=win_sdl_x86
+```
+
+### Compiling x64
+
+```
+dub build -a=x86_64 --config=win_sdl_x64
 ```
 
 ### Distributing A Game

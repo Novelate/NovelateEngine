@@ -15,6 +15,7 @@ module novelate.ui.animatedimage;
 import std.conv : to;
 
 import novelate.ui.component;
+import novelate.buildstate;
 
 /// An animated image component.
 final class AnimatedImage : Component
@@ -287,6 +288,24 @@ final class AnimatedImage : Component
     foreach (sprite; _images)
     {
       sprite.position = super.position;
+    }
+  }
+
+  static if (isManualMemory)
+  {
+    /// See: Component.clean()
+    override void clean()
+    {
+      if (_images)
+      {
+        foreach (image; _images)
+        {
+          if (image)
+          {
+            image.clean();
+          }
+        }
+      }
     }
   }
 }

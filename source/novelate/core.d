@@ -114,10 +114,9 @@ enum StandardScreen : string
 /**
 * Adds a screen to the game.
 * Params:
-*   screenName = The screen name.
 *   screen = The screen to add.
 */
-void addScreen(string screenName, Screen screen)
+void addScreen(Screen screen)
 {
   if (!screen)
   {
@@ -126,7 +125,7 @@ void addScreen(string screenName, Screen screen)
 
   screen.setWidthAndHeight(_width, _height);
 
-  _activeScreens[screenName] = screen;
+  _activeScreens[screen.name] = screen;
 }
 
 /**
@@ -170,7 +169,9 @@ void changeActiveScreen(string screenName, string[] data = null)
   }
 
   screen.update(data);
+
   _activeScreen = screen;
+  _activeScreenName = screen.name;
 
   fireEvent!(EventType.onScreenChange);
 }
@@ -178,6 +179,8 @@ void changeActiveScreen(string screenName, string[] data = null)
 /// Initializes the game.
 void initialize()
 {
+  initExternalBinding();
+
   parseFile("main.txt");
 
   loadFonts(config.dataFolder ~ "/fonts");
@@ -220,8 +223,8 @@ void initialize()
     }
   }
 
-  addScreen(StandardScreen.mainMenu, new MainMenuScreen);
-  addScreen(StandardScreen.scene, new PlayScreen);
+  addScreen(new MainMenuScreen);
+  addScreen(new PlayScreen);
 
   playScene = config.startScene;
 }
@@ -315,16 +318,20 @@ void run()
         goto exit;
       }
 
-      _window.clear(backgroundColor);
-
-      if (_activeScreen)
+      if (_window.canUpdate)
       {
-        _activeScreen.render(_window);
+        _window.clear(backgroundColor);
+
+        if (_activeScreen)
+        {
+          _activeScreen.render(_window);
+        }
+
+        fireEvent!(EventType.onRender);
+
+        _window.render();
       }
-
-      fireEvent!(EventType.onRender);
-
-      _window.render();
     }
     exit:
+    quit();
 }
