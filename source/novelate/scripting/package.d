@@ -8,11 +8,14 @@
 * It can be used freely for both personal and commercial projects.
 * ------
 * Module Description:
-* This module serves as a proxy module to novelate.scripting.config.
+* The scripting package.
 */
-module novelate.config;
+module novelate.scripting;
 
-public import novelate.scripting.config;
-
-/// An alias that gives a proxy to the config so it shows in documentation.
-public alias proxyConfig = config;
+public
+{
+  import novelate.scripting.config;
+  import novelate.scripting.files;
+  import novelate.scripting.parser;
+  import novelate.scripting.scene;
+}

@@ -10,14 +10,14 @@
 * Module Description:
 * This module handles parsing of the visual novel scripting files.
 */
-module novelate.parser;
+module novelate.scripting.parser;
 
-import novelate.config;
+import novelate.scripting.config;
+import novelate.scripting.scene;
+import novelate.scripting.files;
 import novelate.media;
 import novelate.character;
 import novelate.music;
-import novelate.scene;
-import novelate.files;
 
 /**
 * Parses a Novelate file.

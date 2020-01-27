@@ -18,11 +18,11 @@ import std.string : strip, stripLeft, stripRight, format;
 import std.algorithm : filter;
 import std.conv : to;
 
-import novelate.screens;
+import novelate.scripting.parser;
 import novelate.config;
+import novelate.screens;
 import novelate.state;
 import novelate.fonts;
-import novelate.parser;
 import novelate.events;
 import novelate.colormanager;
 import novelate.external;

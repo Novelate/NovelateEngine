@@ -10,7 +10,7 @@
 * Module Description:
 * This module handles scenes.
 */
-module novelate.scene;
+module novelate.scripting.scene;
 
 import std.conv : to;
 import std.algorithm : countUntil, endsWith;
